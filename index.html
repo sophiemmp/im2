@@ -1,25 +1,73 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Behind the moon</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Behind the moon</title>
+	<link rel="icon" type="image/x-icon" href="assets/images/moon.png">
+
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://api.fontshare.com/v2/css?f[]=space-grotesk@300,400,500,600,700,1&display=swap" rel="stylesheet">
+
+	<script type="importmap">
+		{
+		  "imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/"
+		  }
+		}
+	</script>
 </head>
 <body>
-    <header>
-        <h1>Behind the moon</h1>
+	<div id="website-container">
+		<header>
+			<div class="logo">
+                <h2>Behind the</h2>
+                <h1>MOON</h1>
+            </div>
+	
+		</header>
+		<main>
+            <section class="time-box">
+                <div class="content clock-content">
+                    <div class="clock">
+                        <span id="hours">00</span>
+                        <span>:</span>
+                        <span id="minutes">00</span>
+                        <span>:</span>
+                        <span id="seconds">00</span>
+                    </div>
 
-    </header>
-    <main>
-        <h2>Main Content</h2>
-        <p>This is the main content of the page.</p>
+                    <div class="date-row">
+                        <div>
+                            <h4>YEAR</h4>
+                            <p id="year">2026</p>
+                        </div>
+                        <div>
+                            <h4>MONTH</h4>
+                            <p id="month">04</p>
+                        </div>
+                        <div>
+                            <h4>DAY</h4>
+                            <p id="day">21</p>
+                        </div>
+                    </div>
 
-    </main>
-    <footer>
-        <p>This is the footer of the page.</p>
+                    <div class="timezone">
+                        <h4>TIMEZONE</h4>
+                        <p id="timezone">Bern</p>
+                    </div>
+                </div>
+            </section>
+			
+		</main>
 
-    </footer>
-    <script src="js/script.js" type="module"></script>
+		<footer>
+            <p>Impressum</p>
+        </footer>
+	</div>
+
+	<div id="render-container"></div>
+	<script type="module" src="js/main.js"></script>
 </body>
 </html>
