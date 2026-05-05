@@ -4,24 +4,13 @@
     --fs-number: 33px;
     --fs-unit: 24px;
 
-  --max-width: 820px;
-  --page-pad: clamp(1rem, 3vw, 2rem);
-
-  --bg: #030204;
-  --surface: #1b131a;
   --text: #eeebf4;
-  --muted: #ece5f5;
-  --line: #332a3a;
-  --accent: #bb68f7;
+  --line: #eeebf4;
 
   --ga-large: 2.5rem;
   --ga-medium: 1rem;
   --ga-small: 0.5rem;
   --ga-xtrasmall: 0.2rem;
-
-  --radius: 18px;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --logo-bg: var(--text);
 }
 
 * {
@@ -165,7 +154,7 @@ body {
 .divider {
     width: 2px;
     height: 250px;
-    background: white;
+    background: var(--line);
 }
 
 .content {
