@@ -230,8 +230,6 @@ body {
 }
 
 /* apod */
-/* APOD LAYOUT */
-
 .apod-container {
     position: absolute;
     inset: 0;
@@ -295,7 +293,6 @@ body {
     max-height: 170px;
     overflow: hidden;
     position: relative;
-    cursor: pointer;
     transition: max-height 0.5s ease;
 }
 
