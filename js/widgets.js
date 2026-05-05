@@ -2,7 +2,8 @@ import { updateTimeBox } from "./clock.js";
 
 export function loadWidget(widget) {
 	switch (widget) {
-		case "clock", null:
+		case "clock":
+		case null:
 			widget = "clock";
 			loadWidgetContent(widget).then(
 				function() {	
