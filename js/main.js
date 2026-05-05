@@ -1,4 +1,10 @@
-import { updateTimeBox } from "./clock.js";
+import { loadWidget } from "./widgets.js";
 
-updateTimeBox();
-setInterval(updateTimeBox, 1000);
+// get Widget from url
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const widget = urlParams.get('w')
+
+// load Widget
+
+loadWidget(widget);
