@@ -125,6 +125,118 @@ body {
     font-size: 30px;
 }
 
+/* Moonphase */
+.moon-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+    width: 1000px;
+    max-width: 90vw;
+    height: 580px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    padding: 70px 85px;
+    color: white;
+}
+
+.phase-label {
+    height: 395px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-right: 32px;
+}
+
+.phase-label h1 {
+    margin: 0;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 33px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.divider {
+    width: 2px;
+    height: 100%;
+    background: white;
+}
+
+.content {
+    flex: 1;
+}
+
+.title {
+    margin: 0 0 38px;
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 38px 78px;
+}
+
+.stat-title {
+    margin: 0 0 18px;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.value {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.number {
+    font-size: 54px;
+    line-height: 1;
+    font-weight: 300;
+}
+
+.unit {
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 300;
+}
+
+.event-row {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.moon-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.moon-icon.light {
+    background: #d9d9d9;
+}
+
+.moon-icon.dark {
+    background: #555;
+}
+
+.date {
+    margin-top: 12px;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 800;
+}
+
 
 @media (max-width: 600px) {
     header {
@@ -139,7 +251,8 @@ body {
     .logo h2 {
         font-size: 20px;
     }
-}
+
+ /* Timebox */
 
  .time-box {
         top: 35%;
@@ -167,3 +280,70 @@ body {
     .timezone p {
         font-size: 24px;
     }
+
+/* Moonphase */
+.moon-card {
+    top: 55%;
+    width: 90vw;
+    height: auto;
+    padding: 30px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.phase-label {
+    width: 100%;
+    height: auto;
+    margin-right: 0;
+    margin-bottom: 32px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.phase-label h1 {
+    writing-mode: initial;
+    transform: none;
+    font-size: 36px;
+}
+
+.divider {
+    width: 100%;
+    height: 2px;
+}
+
+.title {
+    font-size: 42px;
+    margin-bottom: 32px;
+}
+
+.stats-grid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+}
+
+.stat-title {
+    font-size: 20px;
+}
+
+.number {
+    font-size: 44px;
+}
+
+.unit {
+    font-size: 28px;
+}
+
+.event-row {
+    gap: 22px;
+}
+
+.moon-icon {
+    width: 70px;
+    height: 70px;
+}
+
+.date {
+    font-size: 22px;
+}
+}
