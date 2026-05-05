@@ -1,23 +1,18 @@
-import { updateTimeBox } from "./clock.js";
-
-let widgetIntervalId = null;
+import { handleVisibilityForClock, stopClockInterval } from "./clock.js";
 
 export function loadWidget(widget) {
-	// clear any existing interval for previous widget
-	if (widgetIntervalId !== null) {
-		clearInterval(widgetIntervalId);
-		widgetIntervalId = null;
-	}
-
+	document.removeEventListener("visibilitychange", handleVisibilityForClock);
+	stopClockInterval();
+  
 	switch (widget) {
-		case "clock":
-		case null:
-			widget = "clock";
-			loadWidgetContent(widget).then(function() {
-				updateTimeBox();
-				widgetIntervalId = setInterval(updateTimeBox, 1000);
-			});
-			break;
+	  case "clock":
+	  case null:
+		widget = "clock";
+		loadWidgetContent(widget).then(function() {
+		  handleVisibilityForClock();
+		  document.addEventListener("visibilitychange", handleVisibilityForClock);
+		});
+		break;
 
 		case "moonphase":
 			loadWidgetContent(widget);

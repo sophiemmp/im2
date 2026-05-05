@@ -1,3 +1,24 @@
+let widgetIntervalId = null;
+
+export function startClockInterval() {
+	if (widgetIntervalId !== null) return;
+	updateTimeBox();
+	widgetIntervalId = setInterval(updateTimeBox, 1000);
+}
+  
+export function stopClockInterval() {
+	if (widgetIntervalId === null) return;
+	clearInterval(widgetIntervalId);
+	widgetIntervalId = null;
+}
+  
+export function handleVisibilityForClock() {
+	if (document.visibilityState === "visible") startClockInterval();
+	else stopClockInterval();
+}
+  
+
+
 // Zeit, Datum, Zeitzone
 export function updateTimeBox() {
     const now = new Date();
