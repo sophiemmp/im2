@@ -1,4 +1,5 @@
 import { handleVisibilityForClock, stopClockInterval } from "./clock.js";
+import { clockScene, moonPhaseScene } from "./3d-scene.js";
 
 export function loadWidget(widget) {
 	document.removeEventListener("visibilitychange", handleVisibilityForClock);
@@ -11,11 +12,13 @@ export function loadWidget(widget) {
 		loadWidgetContent(widget).then(function() {
 		  handleVisibilityForClock();
 		  document.addEventListener("visibilitychange", handleVisibilityForClock);
+		  clockScene();
 		});
 		break;
 
 		case "moonphase":
 			loadWidgetContent(widget);
+			moonPhaseScene();
 			break;
 
 		case "apod":

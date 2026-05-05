@@ -3,9 +3,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // basic constances
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.set( 0, 0, 50 );
-camera.lookAt( 0, 0, 0 );
+const camera = new THREE.PerspectiveCamera( 2, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const pivot = new THREE.Object3D();
+camera.position.set( 0, 0, 0 );
+scene.add(pivot);
+pivot.add(camera);
 
 const renderer = new THREE.WebGLRenderer();
 
@@ -21,44 +23,45 @@ renderContainer.appendChild(renderer.domElement);
 // === load 3d model ===
 const loader = new GLTFLoader();
 
-const moon = new THREE.Object3D(); 
-const hubble = new THREE.Object3D();
+export const moon = new THREE.Object3D(); 
+export const hubble = new THREE.Object3D();
 scene.add(moon, hubble);
 
 // load first model
 loader.load('assets/moon.glb', (gltf) => {
 	const model = gltf.scene;
-	model.name = 'moonMode';
-	model.position.set(0, -1.8, -1);
-	model.scale.setScalar(1.25);
-	model.rotation.set(1.07, 0.15, -1.12);
+	model.name = 'moonModel';
+	model.position.set(0, 0, 0);
+	model.scale.setScalar(1);
+	model.rotation.set(3.090, 0.030, 2.800);
 	moon.add(model);
 });
 
 loader.load('assets/hubble.glb', (gltf) => {
 	const model = gltf.scene;
 	model.name = 'hubbleModel';
-	model.position.set(-0.59, -0.14, 0.48);
+	model.position.set(0, 0, 0);
 	model.scale.setScalar(0.04);
-	model.rotation.set(1.07, 0.15, -1.12);
+	model.rotation.set(0, 0, 0);
 	hubble.add(model);
 });
 
-scene.position.set(0, 0, -1);
 
 
 // add light
-const moonLight = new THREE.DirectionalLight(0xffffff, 3)
+const moonLight = new THREE.DirectionalLight(0xffffff, 5)
 moonLight.target = moon;
-scene.add(moonLight);
+//scene.add(moonLight);
 
-const hubbleLight = new THREE.DirectionalLight(0xffffff, 3)
+const hubbleLight = new THREE.DirectionalLight(0xffffff, 5)
 hubbleLight.target = hubble;
-hubbleLight.position.set(2, -5, 2);
-scene.add(hubbleLight);
+// hubbleLight.position.set(2, -5, 2);
+//scene.add(hubbleLight);
+
+scene.add(new THREE.AmbientLight(0xffffff, 5));
 
 // camera position
-camera.position.z = 2;
+
 
 // eventListener to resize scene to window size
 window.addEventListener( 'resize', onWindowResize, false );
@@ -79,4 +82,17 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(renderContainer.clientWidth, renderContainer.clientHeight);
+}
+
+export function clockScene() {
+	camera.position.set( 0, 1.6, 50 );
+	hubble.rotation.set(2.250, 0.6, -1.250);
+	hubble.position.set(-0.480, 1.750, 6)
+	pivot.rotation.set(0, 3, 0)
+}
+
+export function moonPhaseScene() {
+	camera.position.set( 0, 0, 100 );
+	hubble.rotation.set(2.250, 0.6, -1.250);
+	hubble.position.set(-0.480, 1.750, 6)
 }
