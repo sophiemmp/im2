@@ -35,3 +35,18 @@ impressum.addEventListener("click", function() {
 	history.pushState(null, null, "?"+urlParams.toString())
 	loadWidget("impressum");
 });
+
+//apod
+document.addEventListener("DOMContentLoaded", () => {
+    const descWrapper = document.getElementById("desc-wrapper");
+    const toggle = document.getElementById("toggle");
+
+    if (!descWrapper || !toggle) return;
+
+    toggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        descWrapper.classList.toggle("open");
+        toggle.classList.toggle("open");
+    });
+});
