@@ -1,42 +1,43 @@
 import { updateTimeBox } from "./clock.js";
 
+let widgetIntervalId = null;
+
 export function loadWidget(widget) {
+	// clear any existing interval for previous widget
+	if (widgetIntervalId !== null) {
+		clearInterval(widgetIntervalId);
+		widgetIntervalId = null;
+	}
+
 	switch (widget) {
 		case "clock":
 		case null:
 			widget = "clock";
-			loadWidgetContent(widget).then(
-				function() {	
-					updateTimeBox();
-					setInterval(updateTimeBox, 1000);
-				}
-			);
-			
+			loadWidgetContent(widget).then(function() {
+				updateTimeBox();
+				widgetIntervalId = setInterval(updateTimeBox, 1000);
+			});
 			break;
 
 		case "moonphase":
 			loadWidgetContent(widget);
-			
-		  	break;
+			break;
 
 		case "apod":
 			loadWidgetContent(widget);
+			break;
 
-		  	break;
 		case "impressum":
 			loadWidgetContent(widget);
+			break;
 
-		  	break;
-	  
 		default:
 			widget = "404";
 			loadWidgetContent(widget);
-
-		  	break;
+			break;
 	}
-
-	
 }
+
 
 async function loadWidgetContent(widget) {
 	const widgetTarget = document.getElementById("widget-container");
