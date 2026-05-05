@@ -1,5 +1,8 @@
 :root{
-  font-size: 24px;
+    --fs-title: 33px;
+    --fs-label: 15.5px;
+    --fs-number: 33px;
+    --fs-unit: 24px;
 
   --max-width: 820px;
   --page-pad: clamp(1rem, 3vw, 2rem);
@@ -89,7 +92,7 @@ body {
 }
 
 .clock {
-    font-size: 70px;
+    font-size: 60px;
     font-weight: bold;
     letter-spacing: 0.08em;
     line-height: 1;
@@ -99,22 +102,22 @@ body {
     display: flex;
     justify-content: center;
     gap: 45px;
-    margin-top: 28px;
+    margin-top: 20px;
 }
 
 .time-box h4 {
-    font-size: 14px;
+    font-size: var(--fs-label);
     font-weight: bold;
     margin-bottom: 8px;
 }
 
 .time-box p {
-    font-size: 28px;
+    font-size: var(--fs-title);
     font-weight: regular;
 }
 
 .timezone {
-    margin-top: 24px;
+    margin-top: var(--fs-title);
     text-align: left;
     width: fit-content;
     margin-left: auto;
@@ -122,7 +125,7 @@ body {
 }
 
 .timezone p {
-    font-size: 30px;
+    font-size: var(--fs-title);
 }
 
 /* Moonphase */
@@ -143,25 +146,25 @@ body {
 }
 
 .phase-label {
-    height: 395px;
     display: flex;
     align-items: center;
     gap: 28px;
     margin-right: 32px;
+    height: auto;
 }
 
 .phase-label h1 {
     margin: 0;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: 33px;
+    font-size: var(--fs-title);
     line-height: 1;
     font-weight: 800;
 }
 
 .divider {
     width: 2px;
-    height: 100%;
+    height: 250px;
     background: white;
 }
 
@@ -171,7 +174,7 @@ body {
 
 .title {
     margin: 0 0 38px;
-    font-size: 52px;
+    font-size: var(--fs-title);
     line-height: 1;
     font-weight: 800;
 }
@@ -179,12 +182,12 @@ body {
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 38px 78px;
+    gap: 30px 78px;
 }
 
 .stat-title {
     margin: 0 0 18px;
-    font-size: 24px;
+    font-size: var(--fs-label);
     line-height: 1;
     font-weight: 800;
     text-transform: uppercase;
@@ -198,15 +201,15 @@ body {
 }
 
 .number {
-    font-size: 54px;
+    font-size: var(--fs-number);
     line-height: 1;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .unit {
-    font-size: 36px;
+    font-size: var(--fs-unit);
     line-height: 1;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .event-row {
@@ -232,13 +235,19 @@ body {
 
 .date {
     margin-top: 12px;
-    font-size: 25px;
+    font-size: var(--fs-label);
     line-height: 1;
     font-weight: 800;
 }
 
-
 @media (max-width: 600px) {
+    :root {
+        --fs-title: 24px;
+        --fs-label: 14px;
+        --fs-number: 24px;
+        --fs-unit: 18px;
+    }
+
     header {
         top: 50px;
         left: 20px;
@@ -282,68 +291,47 @@ body {
     }
 
 /* Moonphase */
-.moon-card {
+    .moon-card {
+    position: absolute;
     top: 55%;
-    width: 90vw;
-    height: auto;
-    padding: 30px 20px;
-    flex-direction: column;
-    align-items: flex-start;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 28px);
+    max-width: 1000px;
+    padding: 20px 14px;
 }
+    .phase-label {
+        margin-right: 12px;
+        gap: 10px;
+    }
 
-.phase-label {
-    width: 100%;
-    height: auto;
-    margin-right: 0;
-    margin-bottom: 32px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-}
+    .divider {
+        height: 140px;
+    }
 
-.phase-label h1 {
-    writing-mode: initial;
-    transform: none;
-    font-size: 36px;
-}
+    .title {
+        margin-bottom: 16px;
+    }
 
-.divider {
-    width: 100%;
-    height: 2px;
-}
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 14px;
+    }
 
-.title {
-    font-size: 42px;
-    margin-bottom: 32px;
-}
+    .value {
+        gap: 6px;
+    }
 
-.stats-grid {
-    grid-template-columns: 1fr;
-    gap: 34px;
-}
+    .event-row {
+        gap: 10px;
+    }
 
-.stat-title {
-    font-size: 20px;
-}
+    .moon-icon {
+        width: 44px;
+        height: 44px;
+    }
 
-.number {
-    font-size: 44px;
-}
-
-.unit {
-    font-size: 28px;
-}
-
-.event-row {
-    gap: 22px;
-}
-
-.moon-icon {
-    width: 70px;
-    height: 70px;
-}
-
-.date {
-    font-size: 22px;
-}
+    .date {
+        margin-top: 6px;
+    }
 }
