@@ -19,13 +19,13 @@ export function loadWidget(widget) {
 
 		case "moonphase":
 			moonPhaseScene();
+			loadWidgetContent(widget);
 			break;
 
 		case "apod":
 			loadWidgetContent(widget).then(function() {
 				loadApodData();
 			});
-			loadWidgetContent(widget);
 			break;
 
 		case "impressum":
