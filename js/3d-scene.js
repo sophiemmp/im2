@@ -27,7 +27,7 @@ export const moon = new THREE.Object3D();
 export const hubble = new THREE.Object3D();
 scene.add(moon, hubble);
 
-// load first model
+// load moon model
 loader.load('assets/moon.glb', (gltf) => {
 	const model = gltf.scene;
 	model.name = 'moonModel';
@@ -37,15 +37,25 @@ loader.load('assets/moon.glb', (gltf) => {
 	moon.add(model);
 });
 
+// moon pivot for positioning hubble
+const moonPivot = new THREE.Object3D();
+moonPivot.position.copy(moon.position);
+scene.add(moonPivot);
+
+
+// load hubble model
 loader.load('assets/hubble.glb', (gltf) => {
 	const model = gltf.scene;
 	model.name = 'hubbleModel';
-	model.position.set(0, 0, 0);
-	model.scale.setScalar(0.04);
-	model.rotation.set(0, 0, 0);
+	model.rotation.set(-2, 3.7500, -1);
+	model.scale.setScalar(0.001);
+	model.position.set(0, 0, 0)
 	hubble.add(model);
 });
 
+moonPivot.add(moon);
+moon.add(hubble);
+hubble.position.set(7, 1.6, -49)
 
 
 // add light
@@ -86,13 +96,9 @@ function onWindowResize() {
 
 export function clockScene() {
 	camera.position.set( 0, 1.6, 50 );
-	hubble.rotation.set(2.250, 0.6, -1.250);
-	hubble.position.set(-0.480, 1.750, 6)
 	pivot.rotation.set(0, 3, 0)
 }
 
 export function moonPhaseScene() {
-	camera.position.set( 0, 0, 100 );
-	hubble.rotation.set(2.250, 0.6, -1.250);
-	hubble.position.set(-0.480, 1.750, 6)
+	camera.position.set(0, 0, 100 );
 }
