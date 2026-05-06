@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
+export async function loadApodData() {
+    
     const img = document.getElementById("apod-image");
     const title = document.getElementById("apod-title");
     const desc = document.getElementById("apod-description");
@@ -30,8 +31,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 img.src = "fallback.jpg";
                 img.alt = "Today’s APOD is a video";
             }
+            
+            addDescriptionToggleFunction();
         })
         .catch(error => {
             console.error("APOD error:", error);
         });
-});
+}
+
+function addDescriptionToggleFunction() {
+    
+    const descWrapper = document.getElementById("desc-wrapper");
+    const toggle = document.getElementById("toggle");
+    
+	
+    if (!descWrapper || !toggle) return;
+	
+    toggle.addEventListener("click", (event) => {
+		event.stopPropagation();
+
+        descWrapper.classList.toggle("open");
+        toggle.classList.toggle("open");
+    });
+}
