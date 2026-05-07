@@ -21,8 +21,22 @@ export function handleVisibilityForClock() {
 
 // Zeit, Datum, Zeitzone
 export function updateTimeBox() {
-    const now = new Date();
 
+    const timeZoneTime = new Intl.DateTimeFormat('de-CH', {
+        timeZone: 'Europe/Zurich',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).formatToParts(new Date());
+    
+    const p = Object.fromEntries(timeZoneTime.map(x => [x.type, x.value]));
+    
+    const now = new Date(`${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}`);
+  
     const hours = String(now.getHours()).padStart(2, "0");
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
