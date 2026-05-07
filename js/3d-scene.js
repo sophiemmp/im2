@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { moonPhase } from './animate-3d.js';
-import { Tween } from '@tweenjs/tween.js';
+import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene } from './animate-3d.js';
 
 // basic constances
 export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera( 2, window.innerWidth / window.innerHeight, 0.1, 1000 );
-const pivot = new THREE.Object3D();
-camera.position.set( 0, 0, 0 );
+export const pivot = new THREE.Object3D();
 scene.add(pivot);
 pivot.add(camera);
+camera.position.set( 0, 1.3, 40 );
+pivot.rotation.set(0, 3, 0)
 
 export const renderer = new THREE.WebGLRenderer();
 
@@ -40,7 +40,7 @@ loader.load('assets/moon.glb', (gltf) => {
 });
 
 // moon pivot for positioning hubble
-const moonPivot = new THREE.Object3D();
+export const moonPivot = new THREE.Object3D();
 moonPivot.position.copy(moon.position);
 scene.add(moonPivot);
 
@@ -65,12 +65,12 @@ export const moonLight = new THREE.DirectionalLight(0xffffff, 0)
 moonLight.target = moon;
 scene.add(moonLight);
 
-const hubbleLight = new THREE.DirectionalLight(0xffffff, 5)
+export const hubbleLight = new THREE.DirectionalLight(0xffffff, 5)
 hubbleLight.target = hubble;
 hubbleLight.position.set(100, -20, 0);
 scene.add(hubbleLight);
 
-const ambientMoonLight = new THREE.AmbientLight(0xffffff, 5)
+export const ambientMoonLight = new THREE.AmbientLight(0xffffff, 5)
 scene.add(ambientMoonLight);
 
 // camera position
@@ -81,11 +81,11 @@ window.addEventListener( 'resize', onWindowResize, false );
 
 // render animation function (has to be at the bottom)
 function animate(time) {
-  
+	tweenGroup.update(time);
 	renderer.render(scene, camera);
-  }
-// render animated scene
-renderer.setAnimationLoop( animate );
+}
+
+renderer.setAnimationLoop(animate);
 
 // resize scene on window resize
 function onWindowResize() {
@@ -98,20 +98,32 @@ function onWindowResize() {
 }
 
 export function clockScene() {
+	/* 
 	camera.position.set( 0, 1.6, 50 );
 	pivot.rotation.set(0, 3, 0)
 	hubbleLight.intensity = 5;
 	ambientMoonLight.intensity = 5;
 	moonLight.intensity = 0;
 	moonLight.position.set(-1, 0, 10)
+	*/
+	
+	transitionToClockScene(() => {
+		  
+	});
 }
 
 export function moonPhaseScene() {
+	/*
 	camera.position.set(0, 0, 100 );
-	pivot.rotation.set(0, 3, 0)
+	pivot.rotation.set(0, 0, 0)
 	hubbleLight.intensity = 0;
 	ambientMoonLight.intensity = 0.1;
 	moonLight.intensity = 5;
 	moonLight.position.set(-1, 0, 10)
 	moonPhase(18.6, moonLight);
+	*/
+	transitionToMoonPhaseScene(() => {
+	  	moonPhase(18.6, moonLight);
+	});
 }
+

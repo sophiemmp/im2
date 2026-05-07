@@ -1,4 +1,8 @@
-import { renderer, scene, camera, moonLight } from "./3d-scene.js";
+import { renderer, scene, camera, pivot, moon, hubble, moonPivot, moonLight, hubbleLight, ambientMoonLight } from "./3d-scene.js";
+import { Tween, Easing, Group } from '@tweenjs/tween.js';
+
+
+export const tweenGroup = new Group();
 
 function customEase(t, curvature = 2) {
     return t < 0.5
@@ -64,4 +68,79 @@ function animateMoonPhase(startValue, endValue, maxTimePosition) {
     }
 
     requestAnimationFrame(animate); // Start the animation loop
+}
+
+export function transitionToClockScene(onComplete) {
+
+	const lightState = {
+		hubble: hubbleLight.intensity,
+		ambient: ambientMoonLight.intensity,
+		moon: moonLight.intensity
+	};
+
+	new Tween(camera.position, tweenGroup)
+		.to({ x: 0, y: 1.6, z: 50 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.start();
+
+	new Tween(pivot.rotation, tweenGroup)
+		.to({ x: 0, y: 3, z: 0 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.start();
+
+	new Tween(lightState, tweenGroup)
+		.to({ hubble: 5, ambient: 5, moon: 0 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.onUpdate(() => {
+			hubbleLight.intensity = lightState.hubble;
+			ambientMoonLight.intensity = lightState.ambient;
+			moonLight.intensity = lightState.moon;
+		})
+		.onComplete(() => {
+			if (onComplete) onComplete();
+		})
+		.start();
+
+	new Tween(moonLight.position, tweenGroup)
+		.to({ x: -1, y: 0, z: 10 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.start();
+}
+
+
+export function transitionToMoonPhaseScene(onComplete) {
+
+	const lightState = {
+		hubble: hubbleLight.intensity,
+		ambient: ambientMoonLight.intensity,
+		moon: moonLight.intensity
+	};
+
+	new Tween(lightState, tweenGroup)
+		.to({ hubble: 0, ambient: 0.1, moon: 5 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.onUpdate(() => {
+			hubbleLight.intensity = lightState.hubble;
+			ambientMoonLight.intensity = lightState.ambient;
+			moonLight.intensity = lightState.moon;
+		})
+		.onComplete(() => {
+			if (onComplete) onComplete();
+		})
+		.start();
+
+    new Tween(pivot.rotation, tweenGroup)
+		.to({ x: 0, y: 0, z: 0 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.start();
+
+	new Tween(camera.position, tweenGroup)
+		.to({ x: 0, y: 0, z: 100 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.start();
+
+	new Tween(moonLight.position, tweenGroup)
+		.to({ x: -1, y: 0, z: 10 }, 1500)
+		.easing(Easing.Quadratic.InOut)
+		.start();
 }
