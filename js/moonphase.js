@@ -66,6 +66,7 @@ export async function loadMoonData() {
   }
 }
 
+
 export async function loadMoonDataMock() {
   const phaseEl = document.querySelector('.phase-label h1');
   const statEls = Array.from(document.querySelectorAll('.stats-grid .stat'));
