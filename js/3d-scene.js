@@ -71,7 +71,7 @@ loader.load('assets/hubble.glb', (gltf) => {
 	model.name = 'hubbleModel';
 	// set a reasonable test scale/position; tweak to match your scene
 	model.rotation.set(-2, 3.7500, -1);
-	model.scale.setScalar(0.0005);
+	model.scale.setScalar(0.04);
 	model.position.set(0, 0, 0);
 	hubble.add(model);
 
@@ -111,7 +111,67 @@ export function clockScene() {
 
 export function moonPhaseScene() {
 	transitionToMoonPhaseScene(() => {
-		moonPhase(18.6, moonLight);
+		moonPhase(11.6, moonLight);
 	});
 }
 
+// ===== Raycasting & input =====
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const domElem = renderer.domElement;
+
+// helper: compute pointer NDC relative to renderer DOM element
+function updatePointerFromEvent(event) {
+	const rect = domElem.getBoundingClientRect();
+	const x = event.clientX - rect.left;
+	const y = event.clientY - rect.top;
+	pointer.x = (x / rect.width) * 2 - 1;
+	pointer.y = - (y / rect.height) * 2 + 1;
+}
+
+// attach events to renderer.domElement so coordinates align
+domElem.addEventListener('pointermove', (e) => updatePointerFromEvent(e));
+domElem.addEventListener('click', (e) => {
+	updatePointerFromEvent(e);
+
+	// ensure camera world matrix is current
+	camera.updateMatrixWorld();
+
+	raycaster.setFromCamera(pointer, camera);
+
+	// intersect the loaded model roots (checks children with true)
+	const intersects = raycaster.intersectObjects(clickable, true);
+	// debug:
+	// console.log('intersects', intersects.length, intersects);
+
+	if (intersects.length === 0) return;
+
+	const hit = intersects[0].object;
+
+	// Determine whether the hit belongs to moonModel or hubbleModel by walking parents
+	let root = hit;
+	while (root.parent && root.parent !== scene) root = root.parent;
+	// root is now either the loaded model root (if it was added under moon/hubble) or a group
+
+	// Check by name property (we set names on model roots)
+	if (root.name === 'moonModel') {
+		moonClicked();
+	} else if (root.name === 'hubbleModel') {
+		hubbleClicked();
+	} else {
+		// fallback: check if the hit is inside moon or hubble groups
+		if (hit === moon || hit.parent === moon || hit.parent?.parent === moon) {
+		moonClicked();
+		} else if (hit === hubble || hit.parent === hubble || hit.parent?.parent === hubble) {
+		hubbleClicked();
+		}
+	}
+});
+
+// callbacks
+function moonClicked() {
+	document.dispatchEvent(new CustomEvent('widget:navigate', { detail: 'moonphase' }));
+}
+function hubbleClicked() {
+	document.dispatchEvent(new CustomEvent('widget:navigate', { detail: 'apod' }));
+}

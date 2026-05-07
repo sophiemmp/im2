@@ -48,7 +48,7 @@ function getTimePosition(ageDays, days) {
 }
 
 function animateMoonPhase(startValue, endValue, maxTimePosition) {
-	const duration = 3000;
+	const duration = 1500;
     let startTime = null; // Reset start time
 
     function animate(timestamp) {
@@ -87,6 +87,11 @@ export function transitionToClockScene(onComplete) {
 		.to({ x: 0, y: 3, z: 0 }, 1500)
 		.easing(Easing.Quadratic.InOut)
 		.start();
+
+    new Tween(hubble.position, tweenGroup)
+        .to({ x: 2, y: 1.6, z: -10 }, 2200)
+        .easing(Easing.Cubic.InOut)
+        .start();
 
 	new Tween(lightState, tweenGroup)
 		.to({ hubble: 5, ambient: 5, moon: 0 }, 1500)
@@ -130,9 +135,14 @@ export function transitionToMoonPhaseScene(onComplete) {
 		.start();
 
     new Tween(pivot.rotation, tweenGroup)
-		.to({ x: 0, y: 0, z: 0 }, 1500)
-		.easing(Easing.Quadratic.InOut)
-		.start();
+        .to({ x: 0, y: 0, z: 0 }, 2200)
+        .easing(Easing.Cubic.InOut)
+        .start();
+
+    new Tween(hubble.position, tweenGroup)
+        .to({ x: 7, y: 1.6, z: -49.06 }, 2200)
+        .easing(Easing.Cubic.Out)
+        .start();
 
 	new Tween(camera.position, tweenGroup)
 		.to({ x: 0, y: 0, z: 100 }, 1500)
