@@ -4,7 +4,7 @@ export async function loadApodData() {
   const desc = document.getElementById("apod-description");
   const credit = document.getElementById("apod-credit");
 
-  const API_KEY = "KrDhKFygYUX010HIXVZy9gpOXs3XN1EyFSWWWPai";
+  const API_KEY = "mqqOfVtBFRR290kB0AqtfLhwym648ASgQ1UlczKL";
 
   if (!circle || !title || !desc || !credit) return;
 
