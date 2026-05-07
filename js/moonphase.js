@@ -57,10 +57,11 @@ export async function loadMoonData() {
     if (distanceUnit) distanceUnit.textContent = 'km';
 
     if (nextFullNumber) nextFullNumber.textContent = data.nextFull?.inDays != null ? String(data.nextFull.inDays) : '—';
-    if (nextFullDate) nextFullDate.textContent = data.nextFull?.date ?? '—';
+    if (nextFullDate) nextFullDate.textContent = formatIsoAsUtc(data.nextFull?.date ?? data.raw?.traditional_moon?.applies_to_full_moon_at ?? '—');
 
     if (nextEclipseNumber) nextEclipseNumber.textContent = data.nextEclipse?.inDays != null ? String(data.nextEclipse.inDays) : '—';
-    if (nextEclipseDate) nextEclipseDate.textContent = data.nextEclipse?.date ?? '—';
+    if (nextEclipseDate) nextEclipseDate.textContent = formatIsoAsUtc(data.nextEclipse?.date ?? '—');
+
   } catch (err) {
     console.error('Moon API error:', err);
   }
@@ -135,10 +136,11 @@ export async function loadMoonDataMock() {
     if (distanceUnit) distanceUnit.textContent = 'km';
 
     if (nextFullNumber) nextFullNumber.textContent = data.nextFull?.inDays != null ? String(data.nextFull.inDays) : '—';
-    if (nextFullDate) nextFullDate.textContent = data.nextFull?.date ?? '—';
+    if (nextFullDate) nextFullDate.textContent = formatIsoAsUtc(data.nextFull?.date ?? data.raw?.traditional_moon?.applies_to_full_moon_at ?? '—');
 
     if (nextEclipseNumber) nextEclipseNumber.textContent = data.nextEclipse?.inDays != null ? String(data.nextEclipse.inDays) : '—';
-    if (nextEclipseDate) nextEclipseDate.textContent = data.nextEclipse?.date ?? '—';
+    if (nextEclipseDate) nextEclipseDate.textContent = formatIsoAsUtc(data.nextEclipse?.date ?? '—');
+
   } catch (err) {
     console.error('Moon mock error:', err);
   }
