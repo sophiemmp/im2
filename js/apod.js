@@ -1,16 +1,20 @@
 export async function loadApodData() {
   const circle = document.querySelector(".circle");
-  const imgEl = document.getElementById("apod-image");
   const title = document.getElementById("apod-title");
   const desc = document.getElementById("apod-description");
   const credit = document.getElementById("apod-credit");
+
   const API_KEY = "KrDhKFygYUX010HIXVZy9gpOXs3XN1EyFSWWWPai";
 
-  if (!circle || !imgEl || !title || !desc || !credit) return;
+  if (!circle || !title || !desc || !credit) return;
 
   try {
-    const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY}`);
+    const res = await fetch(
+      `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}`
+    );
+
     if (!res.ok) throw new Error("NASA API request failed");
+
     const data = await res.json();
     console.log(data);
 
@@ -20,61 +24,88 @@ export async function loadApodData() {
 
     circle.innerHTML = "";
 
+    // IMAGE
     if (data.media_type === "image") {
       const img = document.createElement("img");
+
       img.id = "apod-image";
       img.src = data.url;
       img.alt = data.title || "NASA APOD";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
+
       circle.appendChild(img);
-    } else if (data.media_type === "video") {
-      let videoUrl = data.url || "";
 
-      try {
-        const u = new URL(videoUrl);
-        if (u.hostname.includes("youtube.com")) {
-          const v = u.searchParams.get("v");
-          if (v) videoUrl = `https://www.youtube.com/embed/${v}`;
-        } else if (u.hostname === "youtu.be") {
-          const id = u.pathname.slice(1);
-          if (id) videoUrl = `https://www.youtube.com/embed/${id}`;
+      enableFullscreenOnDoubleClick(img);
+    }
+
+    // VIDEO
+    else if (data.media_type === "video") {
+      const videoUrl = data.url || "";
+
+      // PREVIEW VIDEO
+      const previewVideo = document.createElement("video");
+
+      previewVideo.id = "apod-image";
+      previewVideo.className = "apod-preview-video";
+
+      previewVideo.src = videoUrl;
+      previewVideo.muted = true;
+      previewVideo.playsInline = true;
+      previewVideo.preload = "metadata";
+      previewVideo.controls = false;
+
+      const playBtn = document.createElement("button");
+
+      playBtn.className = "play-btn";
+      playBtn.id = "play-btn";
+      playBtn.innerHTML = "▶";
+
+      playBtn.setAttribute("aria-label", "Play video");
+
+      circle.appendChild(previewVideo);
+      circle.appendChild(playBtn);
+
+      enableFullscreenOnDoubleClick(previewVideo);
+
+      // RANDOM FRAME
+      previewVideo.addEventListener("loadedmetadata", () => {
+        if (previewVideo.duration && Number.isFinite(previewVideo.duration)) {
+          previewVideo.currentTime =
+            Math.random() * previewVideo.duration;
         }
-      } catch (e) {
-      }
+      });
 
-      if (videoUrl.includes("youtube.com/embed") || videoUrl.includes("player.vimeo.com")) {
-        const iframe = document.createElement("iframe");
-        iframe.id = "apod-video";
-        iframe.src = videoUrl;
-        iframe.frameBorder = "0";
-        iframe.allow =
-          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-        iframe.allowFullscreen = true;
-        iframe.style.width = "100%";
-        iframe.style.height = "100%";
-        iframe.style.display = "block";
-        circle.appendChild(iframe);
-      } else {
+      // PLAY VIDEO
+      playBtn.addEventListener("click", () => {
+        circle.innerHTML = "";
+
         const video = document.createElement("video");
+
         video.id = "apod-video";
         video.src = videoUrl;
-        video.controls = true;
-        video.style.width = "100%";
-        video.style.height = "100%";
-        video.style.objectFit = "cover";
+
+        video.controls = false;
+        video.autoplay = true;
+        video.playsInline = true;
+
         circle.appendChild(video);
-      }
-    } else {
+
+        enableFullscreenOnDoubleClick(video);
+      });
+    }
+
+    // FALLBACK
+    else {
       const img = document.createElement("img");
+
       img.id = "apod-image";
-      img.src = "fallback.jpg";
+      img.src =
+        "https://placehold.co/800x800/000000/ffffff?text=APOD";
+
       img.alt = "APOD unavailable";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
+
       circle.appendChild(img);
+
+      enableFullscreenOnDoubleClick(img);
     }
 
     addDescriptionToggleFunction();
@@ -83,12 +114,48 @@ export async function loadApodData() {
   }
 }
 
+function enableFullscreenOnDoubleClick(element) {
+  element.addEventListener("dblclick", async () => {
+    try {
+      // ENTER FULLSCREEN
+      if (!document.fullscreenElement) {
+        await element.requestFullscreen();
+
+        if (element.tagName === "VIDEO") {
+          element.controls = true;
+        }
+      }
+
+      // EXIT FULLSCREEN
+      else {
+        await document.exitFullscreen();
+
+        if (element.tagName === "VIDEO") {
+          element.controls = false;
+        }
+      }
+    } catch (err) {
+      console.error("Fullscreen failed:", err);
+    }
+  });
+
+  // KEEP CONTROLS IN SYNC
+  document.addEventListener("fullscreenchange", () => {
+    if (element.tagName === "VIDEO") {
+      element.controls = document.fullscreenElement === element;
+    }
+  });
+}
+
 function addDescriptionToggleFunction() {
   const descWrapper = document.getElementById("desc-wrapper");
   const toggle = document.getElementById("toggle");
+
   if (!descWrapper || !toggle) return;
+
   toggle.addEventListener("click", (event) => {
     event.stopPropagation();
+
     descWrapper.classList.toggle("open");
     toggle.classList.toggle("open");
   });
