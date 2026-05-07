@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { moonPhase } from './animate-3d.js';
+import { Tween } from '@tweenjs/tween.js';
 
 // basic constances
 export const scene = new THREE.Scene();
@@ -102,10 +103,12 @@ export function clockScene() {
 	hubbleLight.intensity = 5;
 	ambientMoonLight.intensity = 5;
 	moonLight.intensity = 0;
+	moonLight.position.set(-1, 0, 10)
 }
 
 export function moonPhaseScene() {
 	camera.position.set(0, 0, 100 );
+	pivot.rotation.set(0, 3, 0)
 	hubbleLight.intensity = 0;
 	ambientMoonLight.intensity = 0.1;
 	moonLight.intensity = 5;
