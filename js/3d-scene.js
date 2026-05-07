@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene } from './animate-3d.js';
+import { getAgeDays } from './moonphase.js';
 
 // ===== Scene, camera, renderer =====
 export const scene = new THREE.Scene();
@@ -111,7 +112,7 @@ export function clockScene() {
 
 export function moonPhaseScene() {
 	transitionToMoonPhaseScene(() => {
-		moonPhase(11.6, moonLight);
+		moonPhase(getAgeDays(), moonLight);
 	});
 }
 
