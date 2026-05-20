@@ -212,3 +212,42 @@ export function transitionToApodScene(onComplete) {
 		.easing(Easing.Quadratic.InOut)
 		.start();
 }
+
+const TWEEN_DURATION = 300;  // ms
+
+export function modelScale(root, targetScale, tweenGroup) {
+	if (!root) return;
+	const start = { s: root.scale.x };
+	const end = { s: targetScale };
+
+	if (root._scaleTween) {
+		root._scaleTween.stop();
+	}
+
+	// use the same constructor form you already use elsewhere
+	root._scaleTween = new Tween(start, tweenGroup)
+		.to(end, TWEEN_DURATION)
+		.easing(Easing.Quadratic.Out)
+		.onUpdate((v) => {
+			root.scale.setScalar(v.s);
+		})
+		.onComplete(() => {
+			root._scaleTween = null;
+		})
+		.start();
+}
+
+export function scaleModels(model, targetScale, onComplete) {
+	if (!model) return;
+	if (model._scaleTween) model._scaleTween.stop();
+
+	model._scaleTween = new Tween(model.scale, tweenGroup)
+		.to({ x: targetScale, y: targetScale, z: targetScale }, 300)
+		.easing(Easing.Cubic.InOut)
+		.onComplete(() => {
+			model._scaleTween = null;
+			if (typeof onComplete === 'function') onComplete();
+		})
+		.start();
+}
+

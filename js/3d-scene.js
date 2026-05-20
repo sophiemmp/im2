@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene } from './animate-3d.js';
+import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, modelScale, scaleModels } from './animate-3d.js';
 import { getAgeDays } from './moonphase.js';
 
 // ===== Scene, camera, renderer =====
@@ -52,7 +52,7 @@ const clickable = []; // will hold loaded model roots for raycasting
 // load moon model
 loader.load('assets/moon.glb', (gltf) => {
 	const model = gltf.scene;
-	model.name = 'moonModel';
+	model.name = 'moon';
 	model.position.set(0, 0, 0);
 	model.scale.setScalar(1);
 	model.rotation.set(3.090, 0.030, 2.800);
@@ -69,7 +69,7 @@ loader.load('assets/moon.glb', (gltf) => {
 // load hubble model
 loader.load('assets/hubble.glb', (gltf) => {
 	const model = gltf.scene;
-	model.name = 'hubbleModel';
+	model.name = 'hubble';
 	// set a reasonable test scale/position; tweak to match your scene
 	model.rotation.set(-2, 3.7500, -1);
 	model.scale.setScalar(0.04);
@@ -155,16 +155,16 @@ domElem.addEventListener('click', (e) => {
 
 	const hit = intersects[0].object;
 
-	// Determine whether the hit belongs to moonModel or hubbleModel by walking parents
+	// Determine whether the hit belongs to moon or hubble by walking parents
 	let root = hit;
 	while (root && root !== scene) {
-	if (root.name === 'moonModel' || root.name === 'hubbleModel') break;
+	if (root.name === 'moon' || root.name === 'hubble') break;
 	root = root.parent;
 	}
 
-	if (root?.name === 'moonModel') { 
+	if (root?.name === 'moon') { 
 		moonClicked();
-	} else if (root?.name === 'hubbleModel') { 
+	} else if (root?.name === 'hubble') { 
 		hubbleClicked(); 
 	} else {
 		let ancestor = hit;
@@ -190,3 +190,66 @@ function moonClicked() {
 function hubbleClicked() {
 	document.dispatchEvent(new CustomEvent('widget:navigate', { detail: 'apod' }));
 }
+
+// hover animation
+
+let hoveredRoot = null;
+const HOVER_SCALE = 1.05;
+const NORMAL_SCALE = 1.0;
+
+function findModelRoot(obj) {
+	let root = obj;
+	while (root && root !== scene) {
+		if (root.name === 'moon' || root.name === 'hubble') return root;
+		root = root.parent;
+	}
+	return null;
+}
+
+
+domElem.addEventListener('pointermove', (e) => {
+	updatePointerFromEvent(e);
+	camera.updateMatrixWorld();
+	raycaster.setFromCamera(pointer, camera);
+	const intersects = raycaster.intersectObjects(clickable, true);
+
+	if (intersects.length === 0) {
+		if (hoveredRoot) {
+			// restore exact original scale
+			const orig = hoveredRoot._origScale ?? hoveredRoot.scale.x;
+			scaleModels(hoveredRoot, orig);
+			delete hoveredRoot._origScale;
+			hoveredRoot = null;
+			domElem.style.cursor = '';
+		}
+		return;
+	}
+
+	const hit = intersects[0].object;
+	const root = findModelRoot(hit);
+
+	if (root && (root.name === 'moon' || root.name === 'hubble')) {
+		if (hoveredRoot !== root) {
+			// revert previous hovered
+			if (hoveredRoot) {
+				const prevOrig = hoveredRoot._origScale ?? hoveredRoot.scale.x;
+				scaleModels(hoveredRoot, prevOrig);
+				delete hoveredRoot._origScale;
+			}
+			// set new hovered and save its original uniform scale
+			hoveredRoot = root;
+			hoveredRoot._origScale = hoveredRoot._origScale ?? hoveredRoot.scale.x;
+			// scale to saved * factor
+			scaleModels(hoveredRoot, hoveredRoot._origScale * 1.05);
+			domElem.style.cursor = 'pointer';
+		}
+	} else {
+		if (hoveredRoot) {
+			const orig = hoveredRoot._origScale ?? hoveredRoot.scale.x;
+			scaleModels(hoveredRoot, orig);
+			delete hoveredRoot._origScale;
+			hoveredRoot = null;
+			domElem.style.cursor = '';
+		}
+	}
+});
