@@ -30,3 +30,5 @@ document.addEventListener('widget:navigate', (e) => {
 	history.pushState(null, null, "?"+urlParams.toString());
 	loadWidget(key);
 });  
+
+// footer
