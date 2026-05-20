@@ -231,6 +231,18 @@ display: grid;
 grid-template-columns: 1fr 1fr;
 overflow: hidden;
 }
+
+.apod-container {
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 500ms;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .apod-left,
 .apod-right,
 .impressum-layout > .impressum-left,

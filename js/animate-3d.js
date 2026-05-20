@@ -187,6 +187,9 @@ export function transitionToApodScene(onComplete) {
 	new Tween(hubble.position, tweenGroup)
         .to({ x: 6, y: 1.6, z: -41.5 }, 2200)
         .easing(Easing.Cubic.InOut)
+		.onComplete(() => {
+			if (onComplete) onComplete();
+		})
         .start();
 	
 	new Tween(hubble.rotation, tweenGroup)
@@ -195,15 +198,12 @@ export function transitionToApodScene(onComplete) {
         .start();
 
 	new Tween(lightState, tweenGroup)
-		.to({ hubble: 5, ambient: 5, moon: 0 }, 1500)
+		.to({ hubble: 0, ambient: 0, moon: 0 }, 2700)
 		.easing(Easing.Quadratic.InOut)
 		.onUpdate(() => {
 			hubbleLight.intensity = lightState.hubble;
 			ambientMoonLight.intensity = lightState.ambient;
 			moonLight.intensity = lightState.moon;
-		})
-		.onComplete(() => {
-			if (onComplete) onComplete();
 		})
 		.start();
 

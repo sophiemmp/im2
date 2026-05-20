@@ -117,7 +117,9 @@ export function moonPhaseScene() {
 }
 
 export function apodScene() {
-	transitionToApodScene(() => {});
+	transitionToApodScene(() => {
+		document.querySelector(".apod-container").classList.toggle("hidden");
+	});
 }
 
 // ===== Raycasting & input =====
