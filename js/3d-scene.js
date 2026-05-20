@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene } from './animate-3d.js';
+import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene } from './animate-3d.js';
 import { getAgeDays } from './moonphase.js';
 
 // ===== Scene, camera, renderer =====
@@ -116,6 +116,10 @@ export function moonPhaseScene() {
 	});
 }
 
+export function apodScene() {
+	transitionToApodScene(() => {});
+}
+
 // ===== Raycasting & input =====
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -151,22 +155,30 @@ domElem.addEventListener('click', (e) => {
 
 	// Determine whether the hit belongs to moonModel or hubbleModel by walking parents
 	let root = hit;
-	while (root.parent && root.parent !== scene) root = root.parent;
-	// root is now either the loaded model root (if it was added under moon/hubble) or a group
+	while (root && root !== scene) {
+	if (root.name === 'moonModel' || root.name === 'hubbleModel') break;
+	root = root.parent;
+	}
 
-	// Check by name property (we set names on model roots)
-	if (root.name === 'moonModel') {
+	if (root?.name === 'moonModel') { 
 		moonClicked();
-	} else if (root.name === 'hubbleModel') {
-		hubbleClicked();
+	} else if (root?.name === 'hubbleModel') { 
+		hubbleClicked(); 
 	} else {
-		// fallback: check if the hit is inside moon or hubble groups
-		if (hit === moon || hit.parent === moon || hit.parent?.parent === moon) {
-		moonClicked();
-		} else if (hit === hubble || hit.parent === hubble || hit.parent?.parent === hubble) {
-		hubbleClicked();
+		let ancestor = hit;
+		while (ancestor) {
+			if (ancestor === moon) {
+				moonClicked();
+				break; 
+			}
+			if (ancestor === hubble) {
+				hubbleClicked(); 
+				break; 
+			}
+			ancestor = ancestor.parent;
 		}
 	}
+
 });
 
 // callbacks

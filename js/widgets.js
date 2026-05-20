@@ -1,7 +1,7 @@
 import { handleVisibilityForClock, stopClockInterval } from "./clock.js";
 import { loadApodData } from "./apod.js";
 import { insertMoonData } from "./moonphase.js";
-import { clockScene, moonPhaseScene } from "./3d-scene.js";
+import { clockScene, moonPhaseScene, apodScene } from "./3d-scene.js";
 
 export function loadWidget(widget) {
 	document.removeEventListener("visibilitychange", handleVisibilityForClock);
@@ -28,6 +28,7 @@ export function loadWidget(widget) {
 		case "apod":
 			loadWidgetContent(widget).then(function() {
 				loadApodData();
+				apodScene();
 			});
 			break;
 
