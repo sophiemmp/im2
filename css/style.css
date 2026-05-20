@@ -36,6 +36,7 @@ header{
     display:flex;
     flex-direction:column;
     align-items:center;
+    cursor: pointer;
 }
 
 .logo h2{
@@ -71,6 +72,10 @@ header{
 
 #render-container{
     z-index:1;
+}
+
+#impressum {
+  cursor: pointer;
 }
 
 /* Time / Date / Timezone */
