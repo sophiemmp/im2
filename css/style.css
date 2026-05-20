@@ -446,6 +446,31 @@ transform: translateY(-2px);
 outline: none;
 }
 
+/* Footer */
+footer {
+  position: fixed;
+  left: 0;
+  bottom: -80px;
+
+  width: 100%;
+  height: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(10px);
+
+  z-index: 9999;
+
+  transition: bottom 0.35s ease;
+}
+
+footer.show {
+  bottom: 0;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
 :root {
