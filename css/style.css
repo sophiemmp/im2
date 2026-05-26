@@ -53,6 +53,11 @@ header{
     letter-spacing:-0.04em;
 }
 
+.mobile-explore,
+.mobile-arrow {
+  display: none;
+}
+
 #website-container,
 #render-container{
   width:100vw;
@@ -62,7 +67,6 @@ header{
   left:0;
 }
 #website-container{
-    z-index:2;
     pointer-events: none
 }
 
@@ -484,35 +488,107 @@ header {
 top: 50px;
 left: 20px;
 }
-.logo h1 {
-font-size: 50px;
-}
-.logo h2 {
-font-size: 20px;
-}
+body {
+    overflow: hidden;
+  }
+
+  header {
+    top: auto;
+    left: 50%;
+    bottom: 240px;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
+    z-index: 0;
+  }
+
+  .logo h2 {
+    font-size: 38px;
+    line-height: 0.9;
+    margin-bottom: 0;
+  }
+
+  .logo h1 {
+    font-size: clamp(95px, 28vw, 150px);
+    line-height: 0.72;
+    letter-spacing: -0.06em;
+  }
 
 .time-box {
-top: 35%;
-right: 50%;
-transform: translateX(50%);
-}
-.clock {
-font-size: 42px;
-}
-.date-row {
-gap: 25px;
-margin-top: 20px;
-}
-.time-box h4 {
-font-size: 11px;
-}
-.time-box p {
-font-size: 20px;
-}
-.timezone p {
-font-size: 24px;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  z-index: 6;
 }
 
+.clock {
+  font-size: 60px;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+.date-row {
+  gap: 22px;
+  margin-top: 16px;
+}
+
+.time-box h4 {
+  font-size: 14px;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.time-box p {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.timezone {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.timezone p {
+  font-size: 26px;
+  line-height: 1;
+}
+
+  .mobile-explore,
+  .mobile-arrow {
+    display: flex;
+    position: absolute;
+    z-index: 999;
+    color: white;
+    pointer-events: auto;
+  }
+
+  .mobile-explore {
+  position: absolute;
+  top: 45%;
+  left: 56%;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  z-index: 999;
+}
+
+  .explore-arrow {
+    font-size: 24px;
+  }
+
+  .mobile-arrow {
+    font-size: 28px;
+  }
+
+.mobile-arrow-right {
+  right: 20px;
+  bottom: 240px;
+  transform: rotate(45deg);
+}
+
+/* Apod */
 .moon-card {
 top: 55%;
 width: calc(100% - 28px);
@@ -596,4 +672,55 @@ height: min(66vw, 360px);
 margin: 18px auto 34px;
 transform: translateX(0);
 }
+
+ .moon-card {
+    top: 40%;
+  }
+
+  header {
+    position: absolute;
+    left: 24px;
+    bottom: 150px;
+    top: auto;
+    transform: none;
+    width: auto;
+    text-align: left;
+    z-index: 20;
+  }
+
+  .logo {
+    align-items: flex-start;
+  }
+
+  .logo h2 {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .logo h1 {
+    font-size: 58px;
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+  }
+
+  /* facts box: top */
+  .moon-card {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    height: auto;
+    padding: 0;
+    z-index: 10;
+  }
+
+  .divider {
+    height: 230px;
+  }
+
+  .stats-grid {
+    gap: 26px 28px;
+  }
+
 }
