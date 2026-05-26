@@ -11,6 +11,7 @@ export function loadWidget(widget) {
 	  case "clock":
 	  case null:
 		widget = "clock";
+		moveHeaderToCorner(false)
 		loadWidgetContent(widget).then(function() {
 		  handleVisibilityForClock();
 		  document.addEventListener("visibilitychange", handleVisibilityForClock);
@@ -20,24 +21,28 @@ export function loadWidget(widget) {
 
 		case "moonphase":
 			moonPhaseScene();
+			moveHeaderToCorner(true)
 			loadWidgetContent(widget).then(function() {
 				insertMoonData();
 			});
 			break;
-
-		case "apod":
+			
+			case "apod":
+			moveHeaderToCorner(true)
 			loadWidgetContent(widget).then(function() {
 				loadApodData();
 				apodScene();
 			});
 			break;
-
+			
 		case "impressum":
+			moveHeaderToCorner(false)
 			loadWidgetContent(widget);
 			break;
-
+			
 		default:
 			widget = "404";
+			moveHeaderToCorner(false)
 			loadWidgetContent(widget);
 			break;
 	}
@@ -54,4 +59,13 @@ async function loadWidgetContent(widget) {
 	const widgetContentElement = await res.text();
   
 	widgetTarget.innerHTML = widgetContentElement;
+}
+
+function moveHeaderToCorner(state) {
+	const header = document.querySelector("header");
+	if (state) {		
+		header.classList.add("corner-placement")
+	} else {
+		header.classList.remove("corner-placement")
+	}
 }
