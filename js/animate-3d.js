@@ -11,6 +11,10 @@ export function calcResponsiveBreakpoints() {
 	// Define breakpoints and target values for each key.
 	// Each entry: [width(px), valueArray]. Widths should be ascending.
 	const bp = {
+		moonScaleMoonPhase: [
+			[320, [1]],
+			[768, [1]],
+		],
 		cameraPositionStart: [
 			[400, [0, 1.4, 60]],
 			[768, [0, 1.3, 40]],
@@ -34,7 +38,11 @@ export function calcResponsiveBreakpoints() {
 			[900, [6, 1.6, -41.450]],
 			[2000, [6, 1.6, -41.000]],
 			[3000, [6, 1.6, -39.500]],
-		]
+		],
+		hubbleScale: [
+			[320, [0.05]],
+			[768, [0.04]],
+		],
 	};
   
 	// Linear interpolation helper between two arrays of same length
