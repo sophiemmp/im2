@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, modelScale, scaleModels } from './animate-3d.js';
+import { calcResponsiveBreakpoints, currentScene, applyResponsiveLayout, moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, modelScale, scaleModels } from './animate-3d.js';
 import { getAgeDays } from './moonphase.js';
 
 // ===== Scene, camera, renderer =====
@@ -9,7 +9,7 @@ export const camera = new THREE.PerspectiveCamera(2, window.innerWidth / window.
 export const pivot = new THREE.Object3D();
 scene.add(pivot);
 pivot.add(camera);
-camera.position.set(0, 1.3, 40);
+camera.position.set(calcResponsiveBreakpoints()["cameraPositionStart"][0], calcResponsiveBreakpoints()["cameraPositionStart"][1], calcResponsiveBreakpoints()["cameraPositionStart"][2]);
 pivot.rotation.set(0, 3, 0);
 
 export const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -73,7 +73,7 @@ loader.load('assets/hubble.glb', (gltf) => {
 	model.name = 'hubble';
 	// set a reasonable test scale/position; tweak to match your scene
 	model.rotation.set(-2, 3.7500, -1);
-	model.scale.setScalar(0.04);
+	model.scale.setScalar(calcResponsiveBreakpoints()["hubbleScale"][0]);
 	model.position.set(0, 0, 0);
 	hubble.add(model);
 
@@ -89,14 +89,18 @@ loader.load('assets/hubble.glb', (gltf) => {
 hubble.position.set(7, 1.6, -49.06);
 
 // ===== Resize handling =====
-window.addEventListener('resize', onWindowResize, false);
+window.addEventListener('resize', onWindowResize);
 
 function onWindowResize() {
 	const w = renderContainer.clientWidth || window.innerWidth;
 	const h = renderContainer.clientHeight || window.innerHeight;
+
 	camera.aspect = w / h;
 	camera.updateProjectionMatrix();
+
 	renderer.setSize(w, h);
+
+	applyResponsiveLayout(currentScene);
 }
 
 // ===== Animation loop =====

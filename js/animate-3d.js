@@ -1,6 +1,105 @@
 import { renderer, scene, camera, pivot, moon, hubble, moonPivot, moonLight, hubbleLight, ambientMoonLight } from "./3d-scene.js";
 import { Tween, Easing, Group } from '@tweenjs/tween.js';
 
+export let currentScene = 'clock';
+
+export function calcResponsiveBreakpoints() {
+	const w = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+	const h = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+	const aspect = w / Math.max(h, 1);
+  
+	// Define breakpoints and target values for each key.
+	// Each entry: [width(px), valueArray]. Widths should be ascending.
+	const bp = {
+		cameraPositionStart: [
+			[400, [0, 1.4, 60]],
+			[768, [0, 1.3, 40]],
+		],
+		cameraPosition: [
+			[400, [0, 1.8, 70]],
+			[768, [0, 1.6, 50]],
+		],
+		cameraPositionMoonPhase: [
+			[900, [0, 1.5, 200]],
+			[901, [1.2, 0, 150]],
+			[3000, [3.5, 0, 100]],
+		],
+		hubblePositionClock: [
+			[320, [1.75, 1.58, -10]],
+			[768, [2, 1.6, -10]],
+		],
+		hubblePositionApod: [
+			[600, [6, 1.55, -42,1]],
+			[601, [6, 1.65, -41.5]],
+			[900, [6, 1.6, -41.450]],
+			[2000, [6, 1.6, -41.000]],
+			[3000, [6, 1.6, -39.500]],
+		]
+	};
+  
+	// Linear interpolation helper between two arrays of same length
+	const lerpArr = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+  
+	// For a given width and a set of breakpoints, compute adaptive value
+	const calcValueForKey = (breakpoints) => {
+	  if (!breakpoints || breakpoints.length === 0) return null;
+	  // below first
+	  if (w <= breakpoints[0][0]) return breakpoints[0][1].slice();
+	  // above last
+	  const last = breakpoints[breakpoints.length - 1];
+	  if (w >= last[0]) return last[1].slice();
+	  // find interval
+	  for (let i = 0; i < breakpoints.length - 1; i++) {
+		const [w0, v0] = breakpoints[i];
+		const [w1, v1] = breakpoints[i + 1];
+		if (w >= w0 && w <= w1) {
+		  const t = (w - w0) / (w1 - w0);
+		  return lerpArr(v0, v1, t);
+		}
+	  }
+	  return breakpoints[0][1].slice();
+	};
+  
+	// Build result using bp, then apply small aspect adjustments (optional)
+	const result = {};
+	for (const key of Object.keys(bp)) {
+	  const val = calcValueForKey(bp[key]);
+	  result[key] = val;
+	}
+  
+
+  
+	return result;
+}
+
+export function applyResponsiveLayout(currentScene) {
+	const r = calcResponsiveBreakpoints();
+	
+
+	switch(currentScene) {
+
+		case "clock":
+			camera.position.set(r.cameraPosition[0], r.cameraPosition[1], r.cameraPosition[2]);
+			hubble.position.set(r.hubblePositionClock[0], r.hubblePositionClock[1], r.hubblePositionClock[2]);
+			break;
+
+		case "moonphase":
+			camera.position.set(r.cameraPositionMoonPhase[0], r.cameraPositionMoonPhase[1], r.cameraPositionMoonPhase[2]);
+			break;
+
+		case "apod":
+			camera.position.set(r.cameraPosition[0], r.cameraPosition[1], r.cameraPosition[2]);
+			hubble.position.set(r.hubblePositionApod[0], r.hubblePositionApod[1], r.hubblePositionApod[2]);
+			break;
+	}
+
+	// hubble scale
+	hubble.traverse((child) => {
+		if (child.name === 'hubble') {
+			child.scale.setScalar(r.hubbleScale[0]);
+		}
+	});
+}
 
 export const tweenGroup = new Group();
 
@@ -72,6 +171,8 @@ function animateMoonPhase(startValue, endValue, maxTimePosition) {
 
 export function transitionToClockScene(onComplete) {
 
+	currentScene = 'clock';
+
 	const lightState = {
 		hubble: hubbleLight.intensity,
 		ambient: ambientMoonLight.intensity,
@@ -79,7 +180,7 @@ export function transitionToClockScene(onComplete) {
 	};
 
 	new Tween(camera.position, tweenGroup)
-		.to({ x: 0, y: 1.6, z: 50 }, 1500)
+		.to({ x: calcResponsiveBreakpoints()["cameraPosition"][0], y: calcResponsiveBreakpoints()["cameraPosition"][1], z: calcResponsiveBreakpoints()["cameraPosition"][2] }, 1500)
 		.easing(Easing.Quadratic.InOut)
 		.start();
 
@@ -89,7 +190,7 @@ export function transitionToClockScene(onComplete) {
 		.start();
 
     new Tween(hubble.position, tweenGroup)
-        .to({ x: 2, y: 1.6, z: -10 }, 2200)
+        .to({ x: calcResponsiveBreakpoints()["hubblePositionClock"][0], y: calcResponsiveBreakpoints()["hubblePositionClock"][1], z: calcResponsiveBreakpoints()["hubblePositionClock"][2] }, 2200)
         .easing(Easing.Cubic.InOut)
         .start();
 
@@ -119,6 +220,8 @@ export function transitionToClockScene(onComplete) {
 
 
 export function transitionToMoonPhaseScene(onComplete) {
+
+	currentScene = 'moonphase';
 
 	const lightState = {
 		hubble: hubbleLight.intensity,
@@ -155,7 +258,7 @@ export function transitionToMoonPhaseScene(onComplete) {
         .start();
 
 	new Tween(camera.position, tweenGroup)
-		.to({ x: 0, y: 0, z: 100 }, 1500)
+		.to({ x: calcResponsiveBreakpoints()["cameraPositionMoonPhase"][0], y: calcResponsiveBreakpoints()["cameraPositionMoonPhase"][1], z: calcResponsiveBreakpoints()["cameraPositionMoonPhase"][2]}, 1500)
 		.easing(Easing.Quadratic.InOut)
 		.start();
 
@@ -168,6 +271,8 @@ export function transitionToMoonPhaseScene(onComplete) {
 
 export function transitionToApodScene(onComplete) {
 
+	currentScene = 'apod';
+
 	const lightState = {
 		hubble: hubbleLight.intensity,
 		ambient: ambientMoonLight.intensity,
@@ -175,7 +280,7 @@ export function transitionToApodScene(onComplete) {
 	};
 
 	new Tween(camera.position, tweenGroup)
-		.to({ x: 0, y: 1.6, z: 50 }, 1500)
+		.to({ x: calcResponsiveBreakpoints()["cameraPosition"][0], y: calcResponsiveBreakpoints()["cameraPosition"][1], z: calcResponsiveBreakpoints()["cameraPosition"][2] }, 1500)
 		.easing(Easing.Quadratic.InOut)
 		.start();
 
@@ -185,7 +290,7 @@ export function transitionToApodScene(onComplete) {
 		.start();
 
 	new Tween(hubble.position, tweenGroup)
-        .to({ x: 6, y: 1.6, z: -41.5 }, 2200)
+        .to({ x: calcResponsiveBreakpoints()["hubblePositionApod"][0], y: calcResponsiveBreakpoints()["hubblePositionApod"][1], z: calcResponsiveBreakpoints()["hubblePositionApod"][2] }, 2200)
         .easing(Easing.Cubic.InOut)
 		.onComplete(() => {
 			if (onComplete) onComplete();
