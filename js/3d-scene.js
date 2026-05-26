@@ -12,7 +12,8 @@ pivot.add(camera);
 camera.position.set(0, 1.3, 40);
 pivot.rotation.set(0, 3, 0);
 
-export const renderer = new THREE.WebGLRenderer({ antialias: true });
+export const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -194,8 +195,6 @@ function hubbleClicked() {
 // hover animation
 
 let hoveredRoot = null;
-const HOVER_SCALE = 1.05;
-const NORMAL_SCALE = 1.0;
 
 function findModelRoot(obj) {
 	let root = obj;
