@@ -130,7 +130,7 @@ header{
 .moon-card{
   position:absolute;
   top:50%;
-  left:50%;
+  left:75%;
   z-index:3;
   transform:translate(-50%,-50%);
   width:1000px;
@@ -159,8 +159,9 @@ header{
   font-weight:800;
 }
 
-.divider{width:2px;
-    height:250px;
+.divider{
+    width:2px;
+    height:258px;
     background:var(--line);
 }
 
@@ -177,7 +178,7 @@ header{
 
 .stats-grid{display:grid;
     grid-template-columns:1fr 1fr;
-    gap:30px 78px;
+    gap:30px 20px;
 }
 
 .stat-title{
@@ -601,7 +602,7 @@ header.corner-placement h2{
 
 /* Moophase */
 .moon-card {
-top: 55%;
+top: 25%;
 width: calc(100% - 28px);
 padding: 20px 14px;
 }
@@ -610,7 +611,7 @@ margin-right: 12px;
 gap: 10px;
 }
 .divider {
-height: 140px;
+height: 190px;
 }
 .title {
 margin-bottom: 16px;
