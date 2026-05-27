@@ -267,6 +267,7 @@ justify-content: center;
 position: relative;
 width: min(46vw, 560px);
 height: min(46vw, 560px);
+margin-left: 40pt;
 border-radius: 50%;
 overflow: hidden;
 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
@@ -420,7 +421,7 @@ text-transform: uppercase;
 /* Impressum box */
 .impressum-box {
   width: 70%;
-  max-width: 560px;
+  max-width: 400px;
   text-align: left;
   color: #fff;
   transform: translateX(40px);
@@ -481,10 +482,7 @@ footer.show {
 --fs-unit: 18px;
 }
 
-header {
-top: 50px;
-left: 20px;
-}
+
 body {
     overflow: hidden;
   }
@@ -492,7 +490,7 @@ body {
   header {
     top: auto;
     left: 50%;
-    bottom: 240px;
+    bottom: 210px;
     transform: translateX(-50%);
     width: 100%;
     text-align: center;
@@ -578,8 +576,8 @@ header.corner-placement h2{
 
   .mobile-explore {
   position: absolute;
-  top: 45%;
-  left: 56%;
+  top: 53%;
+  left: 46%;
   align-items: center;
   gap: 8px;
   font-size: 18px;
@@ -588,6 +586,7 @@ header.corner-placement h2{
 
   .explore-arrow {
     font-size: 24px;
+        transform: rotate(300deg);
   }
 
   .mobile-arrow {
@@ -699,6 +698,12 @@ padding: 0 8px 20px;
     height: min(88vw, 520px);
     margin: -20px auto 10px;
     transform: translateY(-40px);
+}
+
+.impressum-box {
+  width: 80%;
+  text-align: left;
+  color: #fff;
 }
 
 }
