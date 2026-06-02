@@ -37,6 +37,8 @@ header{
     flex-direction:column;
     align-items:center;
     cursor: pointer;
+    text-decoration:none;
+    color:inherit;
 }
 
 .logo h2{
@@ -603,6 +605,7 @@ header.corner-placement h2{
 /* Moophase */
 .moon-card {
 top: 25%;
+left: 52%;
 width: calc(100% - 28px);
 padding: 20px 14px;
 }
