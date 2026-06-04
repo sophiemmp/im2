@@ -9,7 +9,8 @@ export async function loadMoonData() {
 		include_visuals: 'true',
 		include_zodiac: 'false',
 		include_rise_set: 'true',
-		include_traditional_moon: 'true'
+		include_forecast: 'true',
+		include_traditional_moon: 'false'
 	});
 
 	const url = `${BASE_URL}?${params.toString()}`;
@@ -59,6 +60,22 @@ async function loadMoonDataMock() {
 		"eclipse": {
 		  "is_eclipse": false,
 		  "is_blood_moon": false
+		},
+		"forecast": {
+		  "days_until_full_moon": 25.3,
+		  "days_until_new_moon": 10.3,
+		  "next_special_moon": {
+			"type": "Supermoon",
+			"subtype": "new",
+			"days_until": 10.5,
+			"distance_km": 357269
+		  },
+		  "next_eclipse": {
+			"type": "partial",
+			"is_blood_moon": false,
+			"date": "2026-08-28T04:12:00Z",
+			"days_until": 84.4
+		  }
 		},
 		"traditional_moon": {
 		  "name": "Flower Moon",
@@ -152,11 +169,19 @@ export async function insertMoonData() {
 	if (distanceUnit) distanceUnit.textContent = 'km';
 
 	if (nextFullNumber) nextFullNumber.textContent = data.nextFull?.inDays != null ? String(data.nextFull.inDays) : '—';
-	if (nextFullDate) nextFullDate.textContent = formatIsoAsUtc(data.nextFull?.date ?? data.raw?.traditional_moon?.applies_to_full_moon_at ?? '—');
+	if (nextFullDate) nextFullDate.textContent = formatIsoAsUtc(data.nextFull?.date ?? data.raw?.next_phases?.full_moon ?? '—');
 
-	if (nextEclipseNumber) nextEclipseNumber.textContent = data.nextEclipse?.inDays != null ? String(data.nextEclipse.inDays) : '—';
-	if (nextEclipseDate) nextEclipseDate.textContent = formatIsoAsUtc(data.nextEclipse?.date ?? '—');
+	const eclipseSource = data.nextEclipse?.date || data.nextEclipse?.inDays
+		? data.nextEclipse
+		: data.raw?.forecast?.next_eclipse ?? null;
+
+	const eclipseInDays = eclipseSource?.inDays ?? eclipseSource?.days_until ?? data.raw?.forecast?.days_until ?? data.raw?.forecast?.days_until_full_moon ?? null;
+	const eclipseDateVal = eclipseSource?.date ?? null;
+
+	if (nextEclipseNumber) nextEclipseNumber.textContent = eclipseInDays != null ? String(eclipseInDays) : '—';
+	if (nextEclipseDate) nextEclipseDate.textContent = formatIsoAsUtc(eclipseDateVal ?? '—');
 }
+
 
 
 export function getAgeDays() {
