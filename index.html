@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://api.fontshare.com/v2/css?f[]=space-grotesk@300,400,500,600,700,1&display=swap" rel="stylesheet">
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.13.0/lottie.min.js" integrity="sha512-uOtp2vx2X/5+tLBEf5UoQyqwAkFZJBM5XwGa7BfXDnWR+wdpRvlSVzaIVcRe3tGNsStu6UMDCeXKEnr4IBT8gA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 	<script type="importmap">
 		{
 		  "imports": {
@@ -18,8 +20,56 @@
 		  }
 		}
 	</script>
+
+	<style>
+		#loading-screen {
+			width:100vw;
+			height:100vh;
+			position:absolute;
+			top:0;
+			left:0;	
+			z-index: 200;
+			background: #000;
+			padding-top: 25vh;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.loading-text {
+			font-size: 30px;
+			text-transform: capitalize;
+		}
+
+		#loading-animation {
+			height: 50px;
+		}
+
+		#loading-screen .logo {
+			margin-top: 10vh;
+		}
+
+		#loading-screen .logo h1 {
+			font-size: 154px;
+		}
+
+		#loading-screen .logo h2 {
+			font-size: 64px;
+		}
+
+	</style>
+
 </head>
 <body>
+	<div id="loading-screen" class="loading">
+		<span class="loading-text">loading</span>
+		<div id="loading-animation"></div>
+		<div class="logo">
+			<h2>Behind the</h2>
+			<h1>MOON</h1>
+		</div>
+	</div>
 	<div id="website-container">
 		<header>
 			<div id="logo" class="logo">
@@ -51,6 +101,7 @@
 	</div>
 
 	<div id="render-container"></div>
+	<script src="js/lottie.js"></script>
 	<script type="module" src="js/3d-scene.js"></script>
 	<script type="module" src="js/main.js"></script>
 </body>

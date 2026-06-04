@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { finishedLoading } from './main.js';
 import { calcResponsiveBreakpoints, currentScene, applyResponsiveLayout, moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, modelScale, scaleModels } from './animate-3d.js';
 import { getAgeDays } from './moonphase.js';
 
@@ -47,43 +48,64 @@ export const ambientMoonLight = new THREE.AmbientLight(0xffffff, 5);
 scene.add(ambientMoonLight);
 
 // ===== GLTF loading =====
-const loader = new GLTFLoader();
 const clickable = []; // will hold loaded model roots for raycasting
 
-// load moon model
-loader.load('assets/moon.glb', (gltf) => {
-	const model = gltf.scene;
-	model.name = 'moon';
-	model.position.set(0, 0, 0);
-	model.scale.setScalar(1);
-	model.rotation.set(3.090, 0.030, 2.800);
-	moon.add(model);
+function minDelay(ms) {
+	return new Promise(res => setTimeout(res, ms));
+}  
 
-	clickable.push(model);
+const manager = new THREE.LoadingManager();
+const minLoadTime = 2000;
+manager.onLoad = async () => {
+  // wait for at least MIN_LOAD_MS since page start or since loading began
+  await Promise.all([
+    // ensure one render frame so textures upload
+    new Promise(r => requestAnimationFrame(r)),
+    minDelay(minLoadTime)
+  ]);
+  finishedLoading();
+};
+manager.onError = (url) => {
+  console.error('Error loading', url);
+  // still call finishedLoading or handle retry if desired
+  requestAnimationFrame(() => finishedLoading());
+};
 
-	// optional box helper for debugging
-	// scene.add(new THREE.BoxHelper(model, 0xff0000));
-}, undefined, (err) => {
-  	console.error('Failed to load moon:', err);
+const loader = new GLTFLoader(manager);
+
+// helper to load and add model
+async function loadModel(url, parent, name, setupCallback) {
+  try {
+    const gltf = await loader.loadAsync(url);
+    const model = gltf.scene;
+    model.name = name;
+    if (setupCallback) setupCallback(model);
+    parent.add(model);
+    clickable.push(model);
+  } catch (err) {
+    console.error(`Failed to load ${url}:`, err);
+    throw err;
+  }
+}
+
+// replace the two loader.load calls with:
+Promise.all([
+  loadModel('assets/moon.glb', moon, 'moon', (model) => {
+    model.position.set(0, 0, 0);
+    model.scale.setScalar(1);
+    model.rotation.set(3.090, 0.030, 2.800);
+  }),
+  loadModel('assets/hubble.glb', hubble, 'hubble', (model) => {
+    model.rotation.set(-2, 3.7500, -1);
+    model.scale.setScalar(calcResponsiveBreakpoints()["hubbleScale"][0]);
+    model.position.set(0, 0, 0);
+    hubble.position.set(7, 1.6, -49.06); // keep positioning after adding
+  })
+]).catch((err) => {
+  // optional: if you want to still reveal UI on partial failure, call finishedLoading()
+  console.error('One or more models failed to load:', err);
 });
 
-// load hubble model
-loader.load('assets/hubble.glb', (gltf) => {
-	const model = gltf.scene;
-	model.name = 'hubble';
-	// set a reasonable test scale/position; tweak to match your scene
-	model.rotation.set(-2, 3.7500, -1);
-	model.scale.setScalar(calcResponsiveBreakpoints()["hubbleScale"][0]);
-	model.position.set(0, 0, 0);
-	hubble.add(model);
-
-	clickable.push(model);
-
-	// optional box helper for debugging
-	// scene.add(new THREE.BoxHelper(model, 0x00ff00));
-}, undefined, (err) => {
-  	console.error('Failed to load hubble:', err);
-});
 
 // position hubble relative to moon
 hubble.position.set(7, 1.6, -49.06);

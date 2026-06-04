@@ -4,9 +4,18 @@ import { loadWidget } from "./widgets.js";
 const urlParams = new URLSearchParams(window.location.search);
 const widget = urlParams.get('w')
 
-// load Widget
+// initial load
+export function finishedLoading() {
+	console.log("Gladot");
 
-loadWidget(widget);
+	const loadingScreen = document.getElementById("loading-screen");
+	loadingScreen.remove();
+
+	// load Widget
+	loadWidget(widget);
+}
+
+
 
 
 // click areas
