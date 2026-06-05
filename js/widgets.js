@@ -63,9 +63,16 @@ async function loadWidgetContent(widget) {
 
 function moveHeaderToCorner(state) {
 	const header = document.querySelector("header");
+	const mobileArrows = document.querySelectorAll(".mobile-arrow");
 	if (state) {		
 		header.classList.add("corner-placement")
+		mobileArrows.forEach(arrow => {
+			arrow.classList.add("hide")
+		});
 	} else {
 		header.classList.remove("corner-placement")
+		mobileArrows.forEach(arrow => {
+			arrow.classList.remove("hide")
+		});
 	}
 }

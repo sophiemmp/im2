@@ -6,7 +6,6 @@ const widget = urlParams.get('w')
 
 // initial load
 export function finishedLoading() {
-	console.log("Gladot");
 
 	const loadingScreen = document.getElementById("loading-screen");
 	loadingScreen.remove();
@@ -15,8 +14,14 @@ export function finishedLoading() {
 	loadWidget(widget);
 }
 
-
-
+// Handle browser back/forward buttons
+window.addEventListener('popstate', (e) => {
+	const updatedParams = new URLSearchParams(window.location.search);
+	const widgetName = updatedParams.get('w');
+	if (widgetName) {
+		loadWidget(widgetName);
+	}
+});
 
 // click areas
 const logo = document.getElementById("logo");

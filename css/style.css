@@ -512,10 +512,11 @@ body {
     letter-spacing: -0.06em;
   }
 
-    .corner-placement {
+.corner-placement {
     position: fixed;
     bottom: 70px;
     left:100px;
+    z-index: 10;
 }
 
 header.corner-placement h1{
@@ -568,11 +569,10 @@ header.corner-placement h2{
   line-height: 1;
 }
 
-  .mobile-explore,
   .mobile-arrow {
     display: flex;
     position: absolute;
-    z-index: 999;
+    z-index: 200;
     color: white;
     pointer-events: auto;
   }
@@ -584,7 +584,6 @@ header.corner-placement h2{
   align-items: center;
   gap: 8px;
   font-size: 18px;
-  z-index: 999;
 }
 
   .explore-arrow {
@@ -592,14 +591,15 @@ header.corner-placement h2{
         transform: rotate(300deg);
   }
 
-  .mobile-arrow {
-    font-size: 28px;
-  }
-
 .mobile-arrow-right {
+  font-size: 28px;
   right: 20px;
   bottom: 240px;
   transform: rotate(45deg);
+}
+
+.mobile-arrow.hide {
+  display: none
 }
 
 /* Moophase */
