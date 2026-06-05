@@ -5,4 +5,4 @@ lottie.loadAnimation({
 	loop: true,
 	autoplay: true,
 	path: 'assets/moon-loading.json'
-  });
+});

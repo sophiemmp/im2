@@ -1,13 +1,16 @@
-import { renderer, scene, camera, pivot, moon, hubble, moonPivot, moonLight, hubbleLight, ambientMoonLight } from "./3d-scene.js";
+import { renderer, scene, camera, pivot, hubble, moonLight, hubbleLight, ambientMoonLight } from "./3d-scene.js";
 import { Tween, Easing, Group } from '@tweenjs/tween.js';
 
 export let currentScene = 'clock';
+
+
+// ===== Responsive Breakpoints with easing =====
 
 export function calcResponsiveBreakpoints() {
 	const w = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 	const h = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-	// ---- helpers ----
+	// == helpers ==
 
 	const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -73,7 +76,7 @@ export function calcResponsiveBreakpoints() {
 		return lerpArr(h0, h1, tW);
 	};
 
-	// ---- YOUR BREAKPOINTS ----
+	// == breakpoints ==
 
 	const bp = {
 		moonScaleMoonPhase: {
@@ -172,8 +175,6 @@ export function calcResponsiveBreakpoints() {
 	};
 	
 
-	// ---- compute result ----
-
 	const result = {};
 
 	for (const key of Object.keys(bp)) {
@@ -212,21 +213,24 @@ export function applyResponsiveLayout(currentScene) {
 	});
 }
 
+
+
+// ===== Animate Moon Phase =====
+
 export const tweenGroup = new Group();
 
 function customEase(t, curvature = 2) {
-    return t < 0.5
-        ? Math.pow(t * 2, 1 / curvature) / 2 // Fast start
-        : 1 - Math.pow(-(t * 2 - 2), 1 / curvature) / 2; // Fast end
+	return t < 0.5
+		? Math.pow(t * 2, 1 / curvature) / 2
+		: 1 - Math.pow(-(t * 2 - 2), 1 / curvature) / 2;
 }
 
 export function getCurrentValue(startValue, endValue, timePosition, curvature = 5) {
-    // Normalize time position to a value between 0 and 1
-    let t = Math.min(Math.max(timePosition, 0), 1); // Ensure t is within [0, 1]
-    const easedT = customEase(t, curvature); // Apply easing function
 
-    // Interpolate value based on easedT
-    return startValue + (endValue - startValue) * easedT; 
+	let t = Math.min(Math.max(timePosition, 0), 1);
+	const easedT = customEase(t, curvature); 
+
+	return startValue + (endValue - startValue) * easedT; 
 }
 
 export function moonPhase(ageDays) {
@@ -259,26 +263,29 @@ function getTimePosition(ageDays, days) {
 
 function animateMoonPhase(startValue, endValue, maxTimePosition) {
 	const duration = 1500;
-    let startTime = null; // Reset start time
+	let startTime = null;
 
-    function animate(timestamp) {
-        if (!startTime) startTime = timestamp; // Set start time on first call
-        let elapsed = timestamp - startTime; // Calculate how much time has passed
-        let timePosition = Math.min(elapsed / duration, 1); // Normalize time to 0-1
-        
-        // Get the current value based on the time position and easing function
-        const zLPos = getCurrentValue(startValue, endValue, timePosition);
+	function animate(timestamp) {
+		if (!startTime) startTime = timestamp;
+		let elapsed = timestamp - startTime;
+		let timePosition = Math.min(elapsed / duration, 1);
 		
-        moonLight.position.z = zLPos; // Update moon light position
-        renderer.render(scene, camera); // Render the scene
+		const zLPos = getCurrentValue(startValue, endValue, timePosition);
+		
+		moonLight.position.z = zLPos;
+		renderer.render(scene, camera);
 
-        if (timePosition < maxTimePosition) {
-            requestAnimationFrame(animate); 
-        }
-    }
+		if (timePosition < maxTimePosition) {
+			requestAnimationFrame(animate); 
+		}
+	}
 
-    requestAnimationFrame(animate); // Start the animation loop
+	requestAnimationFrame(animate);
 }
+
+
+
+// ===== Animated scene transitions =====
 
 export function transitionToClockScene(onComplete) {
 
@@ -300,15 +307,15 @@ export function transitionToClockScene(onComplete) {
 		.easing(Easing.Quadratic.InOut)
 		.start();
 
-    new Tween(hubble.position, tweenGroup)
-        .to({ x: calcResponsiveBreakpoints()["hubblePositionClock"][0], y: calcResponsiveBreakpoints()["hubblePositionClock"][1], z: calcResponsiveBreakpoints()["hubblePositionClock"][2] }, 2200)
-        .easing(Easing.Cubic.InOut)
-        .start();
+	new Tween(hubble.position, tweenGroup)
+		.to({ x: calcResponsiveBreakpoints()["hubblePositionClock"][0], y: calcResponsiveBreakpoints()["hubblePositionClock"][1], z: calcResponsiveBreakpoints()["hubblePositionClock"][2] }, 2200)
+		.easing(Easing.Cubic.InOut)
+		.start();
 
 	new Tween(hubble.rotation, tweenGroup)
-        .to({ x: 0, y: 0, z: 0 }, 2200)
-        .easing(Easing.Cubic.InOut)
-        .start();
+		.to({ x: 0, y: 0, z: 0 }, 2200)
+		.easing(Easing.Cubic.InOut)
+		.start();
 
 	new Tween(lightState, tweenGroup)
 		.to({ hubble: 5, ambient: 5, moon: 0 }, 1500)
@@ -353,20 +360,20 @@ export function transitionToMoonPhaseScene(onComplete) {
 		})
 		.start();
 
-    new Tween(pivot.rotation, tweenGroup)
-        .to({ x: 0, y: 0, z: 0 }, 2200)
-        .easing(Easing.Cubic.InOut)
-        .start();
+	new Tween(pivot.rotation, tweenGroup)
+		.to({ x: 0, y: 0, z: 0 }, 2200)
+		.easing(Easing.Cubic.InOut)
+		.start();
 
-    new Tween(hubble.position, tweenGroup)
-        .to({ x: 7, y: 1.6, z: -49.06 }, 2200)
-        .easing(Easing.Cubic.Out)
-        .start();
+	new Tween(hubble.position, tweenGroup)
+		.to({ x: 7, y: 1.6, z: -49.06 }, 2200)
+		.easing(Easing.Cubic.Out)
+		.start();
 
 	new Tween(hubble.rotation, tweenGroup)
-        .to({ x: 0, y: 0, z: 0 }, 2200)
-        .easing(Easing.Cubic.InOut)
-        .start();
+		.to({ x: 0, y: 0, z: 0 }, 2200)
+		.easing(Easing.Cubic.InOut)
+		.start();
 
 	new Tween(camera.position, tweenGroup)
 		.to({ x: calcResponsiveBreakpoints()["cameraPositionMoonPhase"][0], y: calcResponsiveBreakpoints()["cameraPositionMoonPhase"][1], z: calcResponsiveBreakpoints()["cameraPositionMoonPhase"][2]}, 1500)
@@ -401,17 +408,17 @@ export function transitionToApodScene(onComplete) {
 		.start();
 
 	new Tween(hubble.position, tweenGroup)
-        .to({ x: calcResponsiveBreakpoints()["hubblePositionApod"][0], y: calcResponsiveBreakpoints()["hubblePositionApod"][1], z: calcResponsiveBreakpoints()["hubblePositionApod"][2] }, 2200)
-        .easing(Easing.Cubic.InOut)
+		.to({ x: calcResponsiveBreakpoints()["hubblePositionApod"][0], y: calcResponsiveBreakpoints()["hubblePositionApod"][1], z: calcResponsiveBreakpoints()["hubblePositionApod"][2] }, 2200)
+		.easing(Easing.Cubic.InOut)
 		.onComplete(() => {
 			if (onComplete) onComplete();
 		})
-        .start();
+		.start();
 	
 	new Tween(hubble.rotation, tweenGroup)
-        .to({ x: 0, y: -0.93, z: 0.310 }, 2200)
-        .easing(Easing.Cubic.InOut)
-        .start();
+		.to({ x: 0, y: -0.93, z: 0.310 }, 2200)
+		.easing(Easing.Cubic.InOut)
+		.start();
 
 	new Tween(lightState, tweenGroup)
 		.to({ hubble: 0, ambient: 0, moon: 0 }, 2700)
@@ -440,7 +447,7 @@ export function modelScale(root, targetScale, tweenGroup) {
 		root._scaleTween.stop();
 	}
 
-	// use the same constructor form you already use elsewhere
+	
 	root._scaleTween = new Tween(start, tweenGroup)
 		.to(end, TWEEN_DURATION)
 		.easing(Easing.Quadratic.Out)

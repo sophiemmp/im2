@@ -57,11 +57,11 @@ export function returnToHome(element) {
 const footer = document.querySelector("footer");
 
 document.addEventListener("mousemove", (e) => {
-  const distanceFromBottom = window.innerHeight - e.clientY;
+	const distanceFromBottom = window.innerHeight - e.clientY;
 
-  if (distanceFromBottom <= 100) {
-    footer.classList.add("show");
-  } else {
-    footer.classList.remove("show");
-  }
+	if (distanceFromBottom <= 100) {
+		footer.classList.add("show");
+	} else {
+		footer.classList.remove("show");
+	}
 });

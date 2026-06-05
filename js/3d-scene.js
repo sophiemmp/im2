@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { finishedLoading } from './main.js';
-import { calcResponsiveBreakpoints, currentScene, applyResponsiveLayout, moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, modelScale, scaleModels } from './animate-3d.js';
+import { calcResponsiveBreakpoints, currentScene, applyResponsiveLayout, moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, scaleModels } from './animate-3d.js';
 import { getAgeDays } from './moonphase.js';
 
 // ===== Scene, camera, renderer =====
@@ -18,23 +18,23 @@ renderer.setClearColor(0x000000, 0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// container where scene is rendered
 const renderContainer = document.getElementById('render-container');
 renderContainer.appendChild(renderer.domElement);
 
-// ===== Objects and hierarchy =====
+// ===== Objects and Lights =====
+
+// objects
 export const moon = new THREE.Object3D();
 export const hubble = new THREE.Object3D();
 
-// create a pivot for moon/hubble placement
+// pivot
 export const moonPivot = new THREE.Object3D();
 scene.add(moonPivot);
 
-// clear, consistent hierarchy:
 moonPivot.add(moon);
 moon.add(hubble);
 
-// add lights
+// lights
 export const moonLight = new THREE.DirectionalLight(0xffffff, 0);
 moonLight.target = moon;
 scene.add(moonLight);
@@ -48,7 +48,7 @@ export const ambientMoonLight = new THREE.AmbientLight(0xffffff, 5);
 scene.add(ambientMoonLight);
 
 // ===== GLTF loading =====
-const clickable = []; // will hold loaded model roots for raycasting
+const clickable = [];
 
 function minDelay(ms) {
 	return new Promise(res => setTimeout(res, ms));
@@ -57,53 +57,49 @@ function minDelay(ms) {
 const manager = new THREE.LoadingManager();
 const minLoadTime = 2000;
 manager.onLoad = async () => {
-  // wait for at least MIN_LOAD_MS since page start or since loading began
-  await Promise.all([
-    // ensure one render frame so textures upload
-    new Promise(r => requestAnimationFrame(r)),
-    minDelay(minLoadTime)
-  ]);
-  finishedLoading();
+	await Promise.all([
+		new Promise(r => requestAnimationFrame(r)),
+		minDelay(minLoadTime)
+	]);
+	finishedLoading();
 };
 manager.onError = (url) => {
-  console.error('Error loading', url);
-  // still call finishedLoading or handle retry if desired
-  requestAnimationFrame(() => finishedLoading());
+	console.error('Error loading', url);
+	requestAnimationFrame(() => finishedLoading());
 };
 
 const loader = new GLTFLoader(manager);
 
 // helper to load and add model
 async function loadModel(url, parent, name, setupCallback) {
-  try {
-    const gltf = await loader.loadAsync(url);
-    const model = gltf.scene;
-    model.name = name;
-    if (setupCallback) setupCallback(model);
-    parent.add(model);
-    clickable.push(model);
-  } catch (err) {
-    console.error(`Failed to load ${url}:`, err);
-    throw err;
-  }
+	try {
+		const gltf = await loader.loadAsync(url);
+		const model = gltf.scene;
+		model.name = name;
+		if (setupCallback) setupCallback(model);
+		parent.add(model);
+		clickable.push(model);
+	} catch (err) {
+		console.error(`Failed to load ${url}:`, err);
+		throw err;
+	}
 }
 
-// replace the two loader.load calls with:
+// loading the objects
 Promise.all([
-  loadModel('assets/moon.glb', moon, 'moon', (model) => {
-    model.position.set(0, 0, 0);
-    model.scale.setScalar(1);
-    model.rotation.set(3.090, 0.030, 2.800);
-  }),
-  loadModel('assets/hubble.glb', hubble, 'hubble', (model) => {
-    model.rotation.set(-2, 3.7500, -1);
-    model.scale.setScalar(calcResponsiveBreakpoints()["hubbleScale"][0]);
-    model.position.set(0, 0, 0);
-    hubble.position.set(7, 1.6, -49.06); // keep positioning after adding
-  })
+	loadModel('assets/moon.glb', moon, 'moon', (model) => {
+		model.position.set(0, 0, 0);
+		model.scale.setScalar(1);
+		model.rotation.set(3.090, 0.030, 2.800);
+	}),
+	loadModel('assets/hubble.glb', hubble, 'hubble', (model) => {
+		model.rotation.set(-2, 3.7500, -1);
+		model.scale.setScalar(calcResponsiveBreakpoints()["hubbleScale"][0]);
+		model.position.set(0, 0, 0);
+		hubble.position.set(7, 1.6, -49.06);
+	})
 ]).catch((err) => {
-  // optional: if you want to still reveal UI on partial failure, call finishedLoading()
-  console.error('One or more models failed to load:', err);
+	console.error('One or more models failed to load:', err);
 });
 
 
@@ -154,7 +150,6 @@ const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const domElem = renderer.domElement;
 
-// helper: compute pointer NDC relative to renderer DOM element
 function updatePointerFromEvent(event) {
 	const rect = domElem.getBoundingClientRect();
 	const x = event.clientX - rect.left;
@@ -163,26 +158,21 @@ function updatePointerFromEvent(event) {
 	pointer.y = - (y / rect.height) * 2 + 1;
 }
 
-// attach events to renderer.domElement so coordinates align
+// eventhandlers added to objects
 domElem.addEventListener('pointermove', (e) => updatePointerFromEvent(e));
 domElem.addEventListener('click', (e) => {
 	updatePointerFromEvent(e);
 
-	// ensure camera world matrix is current
 	camera.updateMatrixWorld();
 
 	raycaster.setFromCamera(pointer, camera);
 
-	// intersect the loaded model roots (checks children with true)
 	const intersects = raycaster.intersectObjects(clickable, true);
-	// debug:
-	// console.log('intersects', intersects.length, intersects);
 
 	if (intersects.length === 0) return;
 
 	const hit = intersects[0].object;
 
-	// Determine whether the hit belongs to moon or hubble by walking parents
 	let root = hit;
 	while (root && root !== scene) {
 	if (root.name === 'moon' || root.name === 'hubble') break;
@@ -240,7 +230,6 @@ domElem.addEventListener('pointermove', (e) => {
 
 	if (intersects.length === 0) {
 		if (hoveredRoot) {
-			// restore exact original scale
 			const orig = hoveredRoot._origScale ?? hoveredRoot.scale.x;
 			scaleModels(hoveredRoot, orig);
 			delete hoveredRoot._origScale;
@@ -255,16 +244,13 @@ domElem.addEventListener('pointermove', (e) => {
 
 	if (root && (root.name === 'moon' || root.name === 'hubble')) {
 		if (hoveredRoot !== root) {
-			// revert previous hovered
 			if (hoveredRoot) {
 				const prevOrig = hoveredRoot._origScale ?? hoveredRoot.scale.x;
 				scaleModels(hoveredRoot, prevOrig);
 				delete hoveredRoot._origScale;
 			}
-			// set new hovered and save its original uniform scale
 			hoveredRoot = root;
 			hoveredRoot._origScale = hoveredRoot._origScale ?? hoveredRoot.scale.x;
-			// scale to saved * factor
 			scaleModels(hoveredRoot, hoveredRoot._origScale * 1.05);
 			domElem.style.cursor = 'pointer';
 		}

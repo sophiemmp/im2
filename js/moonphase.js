@@ -40,7 +40,6 @@ export async function loadMoonData() {
 
 
 async function loadMoonDataMock() {
-	// recorded response object (replace with your saved JSON if different)
 	const res = {
 		"timestamp": "2026-05-07T15:54:07+00:00",
 		"phase": {
@@ -117,10 +116,10 @@ function transformMoonData(res) {
 
 function nowIsoForZurich() {
 	const dtf = new Intl.DateTimeFormat('en', {
-	  timeZone: 'Europe/Zurich',
-	  year: 'numeric', month: '2-digit', day: '2-digit',
-	  hour: '2-digit', minute: '2-digit', second: '2-digit',
-	  hour12: false
+		timeZone: 'Europe/Zurich',
+		year: 'numeric', month: '2-digit', day: '2-digit',
+		hour: '2-digit', minute: '2-digit', second: '2-digit',
+		hour12: false
 	});
 	const parts = dtf.formatToParts(new Date());
 	const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
@@ -133,7 +132,6 @@ function formatIsoAsUtc(iso) {
 	try {
 	  const d = new Date(iso);
 	  if (Number.isNaN(d.getTime())) return '—';
-	  // format as YYYY‑MM‑DD HH:MM UTC
 	  const pad = (n) => String(n).padStart(2, '0');
 	  return `${pad(d.getUTCDate())}.${pad(d.getUTCMonth()+1)}.${d.getUTCFullYear()}`;
 	} catch {
