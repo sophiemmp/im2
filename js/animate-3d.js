@@ -6,77 +6,179 @@ export let currentScene = 'clock';
 export function calcResponsiveBreakpoints() {
 	const w = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 	const h = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-	const aspect = w / Math.max(h, 1);
-  
-	// Define breakpoints and target values for each key.
-	// Each entry: [width(px), valueArray]. Widths should be ascending.
-	const bp = {
-		moonScaleMoonPhase: [
-			[320, [1]],
-			[768, [1]],
-		],
-		cameraPositionStart: [
-			[400, [0, 1.4, 60]],
-			[768, [0, 1.3, 40]],
-		],
-		cameraPosition: [
-			[400, [0, 1.8, 70]],
-			[768, [0, 1.6, 50]],
-		],
-		cameraPositionMoonPhase: [
-			[900, [0, 1.5, 200]],
-			[901, [1.2, 0, 150]],
-			[3000, [3.5, 0, 100]],
-		],
-		hubblePositionClock: [
-			[320, [1.75, 1.58, -10]],
-			[768, [2, 1.6, -10]],
-		],
-		hubblePositionApod: [
-			[600, [6, 1.55, -42,1]],
-			[601, [6, 1.65, -41.5]],
-			[900, [6, 1.6, -41.450]],
-			[2000, [6, 1.6, -41.000]],
-			[3000, [6, 1.6, -39.500]],
-		],
-		hubbleScale: [
-			[320, [0.05]],
-			[768, [0.04]],
-		],
-	};
-  
-	// Linear interpolation helper between two arrays of same length
-	const lerpArr = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
-  
-	// For a given width and a set of breakpoints, compute adaptive value
-	const calcValueForKey = (breakpoints) => {
-	  if (!breakpoints || breakpoints.length === 0) return null;
-	  // below first
-	  if (w <= breakpoints[0][0]) return breakpoints[0][1].slice();
-	  // above last
-	  const last = breakpoints[breakpoints.length - 1];
-	  if (w >= last[0]) return last[1].slice();
-	  // find interval
-	  for (let i = 0; i < breakpoints.length - 1; i++) {
-		const [w0, v0] = breakpoints[i];
-		const [w1, v1] = breakpoints[i + 1];
-		if (w >= w0 && w <= w1) {
-		  const t = (w - w0) / (w1 - w0);
-		  return lerpArr(v0, v1, t);
-		}
-	  }
-	  return breakpoints[0][1].slice();
-	};
-  
-	// Build result using bp, then apply small aspect adjustments (optional)
-	const result = {};
-	for (const key of Object.keys(bp)) {
-	  const val = calcValueForKey(bp[key]);
-	  result[key] = val;
-	}
-  
 
-  
+	// ---- helpers ----
+
+	const lerp = (a, b, t) => a + (b - a) * t;
+
+	const lerpArr = (a, b, t) =>
+		a.map((v, i) => lerp(v, b[i], t));
+
+	// 1D breakpoint solver
+	const solve1D = (value, breakpoints) => {
+		if (!breakpoints?.length) return null;
+
+		if (value <= breakpoints[0][0]) return breakpoints[0][1].slice();
+		const last = breakpoints[breakpoints.length - 1];
+		if (value >= last[0]) return last[1].slice();
+
+		for (let i = 0; i < breakpoints.length - 1; i++) {
+			const [v0, r0] = breakpoints[i];
+			const [v1, r1] = breakpoints[i + 1];
+
+			if (value >= v0 && value <= v1) {
+				const t = (value - v0) / (v1 - v0);
+				return lerpArr(r0, r1, t);
+			}
+		}
+
+		return breakpoints[0][1].slice();
+	};
+
+	// 2D breakpoint solver
+	const solve2D = (width, height, grid) => {
+		const widthKeys = Object.keys(grid)
+			.map(Number)
+			.sort((a, b) => a - b);
+
+		if (!widthKeys.length) return null;
+
+		// clamp width range
+		const wMin = widthKeys[0];
+		const wMax = widthKeys[widthKeys.length - 1];
+
+		const wClamped = Math.min(Math.max(width, wMin), wMax);
+
+		// find width interval
+		let w0 = widthKeys[0];
+		let w1 = widthKeys[widthKeys.length - 1];
+
+		for (let i = 0; i < widthKeys.length - 1; i++) {
+			if (wClamped >= widthKeys[i] && wClamped <= widthKeys[i + 1]) {
+				w0 = widthKeys[i];
+				w1 = widthKeys[i + 1];
+				break;
+			}
+		}
+
+		const tW = w0 === w1 ? 0 : (wClamped - w0) / (w1 - w0);
+
+		// solve height for both width slices
+		const h0 = solve1D(height, grid[w0]);
+		const h1 = solve1D(height, grid[w1]);
+
+		if (!h0 || !h1) return null;
+
+		// interpolate between width slices
+		return lerpArr(h0, h1, tW);
+	};
+
+	// ---- YOUR BREAKPOINTS ----
+
+	const bp = {
+		moonScaleMoonPhase: {
+			320: [
+				[0, [1]],
+			],
+			768: [
+				[0, [1]],
+			]
+		},
+		cameraPositionStart: {
+			320: [
+				[0, [0, 1.4, 60]],
+			],
+			768: [
+				[0, [0, 1.3, 40]],
+			]
+		},
+	
+		cameraPosition: {
+			320: [
+				[0, [0, 1.8, 70]],
+			],
+			768: [
+				[0, [0, 1.6, 50]],
+			]
+		},
+	
+		cameraPositionMoonPhase: {
+			900: [
+				[906, [0, 1.5, 200]],
+				[1280, [0, 1.5, 200]],
+			],
+			901: [
+				[400, [4.5, 0, 150]],
+				[906, [1.2, 0, 150]],
+				[907, [0, 1.5, 170]],
+				[1280, [0, 1.5, 170]],
+			],
+			1400: [
+				[400, [3.5, 0, 150]],
+				[906, [2.25, 0, 165]],
+				[907, [0, 1.5, 165]],
+				[1280, [0, 1.5, 165]],
+			],
+			1401: [
+				[906, [3.5, 0, 165]],
+				[1280, [1.75, 0, 165]],
+			],
+			3000: [
+				[906, [3.5, 0, 100]],
+				[1280, [3.5, 0, 150]],
+			]
+		},
+	
+		hubblePositionClock: {
+			320: [
+				[0, [1.75, 1.58, -10]],
+			],
+			768: [
+				[0, [2, 1.6, -10]],
+			]
+		},
+	
+		hubblePositionApod: {
+			600: [
+				[906, [6, 1.55, -42.1]],
+			],
+			601: [
+				[906, [6, 1.65, -41.5]],
+				[1280, [5, 1.68, -34.5]],
+			],
+			900: [
+				[906, [6, 1.6, -41.45]],
+				[1280, [5, 1.6, -34.5]],
+			],
+			2000: [
+				[906, [6, 1.6, -41.0]],
+				[1280, [5.6, 1.6, -38.15]],
+			],
+			3000: [
+				[906, [6, 1.6, -39.5]],
+				[1280, [5.6, 1.6, -37.5]],
+			]
+		},
+	
+		hubbleScale: {
+			320: [
+				[0, [0.05]],
+			],
+			768: [
+				[0, [0.04]],
+			]
+		}
+	};
+	
+
+	// ---- compute result ----
+
+	const result = {};
+
+	for (const key of Object.keys(bp)) {
+		result[key] = solve2D(w, h, bp[key]);
+	}
+
 	return result;
 }
 
