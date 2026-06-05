@@ -23,6 +23,7 @@ Darüber hinaus gab es kleinere Schwierigkeiten bei der Umsetzung der Media Quer
 
 - NASA Open APIs (https://api.nasa.gov/)
 - three.js Manual (https://threejs.org/manual/#en/installation)
+- tween.js Documentation (https://createjs.com/docs/tweenjs/modules/TweenJS.html)
 - Duck.ai (https://duck.ai/) - Unterstützung bei Fehlerbehebungen
 
 ## Zusätzliches - Arbeitsaufteilung
