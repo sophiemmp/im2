@@ -34,7 +34,7 @@ export async function loadApodData() {
 
       circle.appendChild(img);
 
-      enableFullscreenOnDoubleClick(img);
+      enableFullscreenOnClick(img);
     }
 
     // VIDEO
@@ -64,7 +64,7 @@ export async function loadApodData() {
       circle.appendChild(previewVideo);
       circle.appendChild(playBtn);
 
-      enableFullscreenOnDoubleClick(previewVideo);
+      enableFullscreenOnClick(previewVideo);
 
       // RANDOM FRAME
       previewVideo.addEventListener("loadedmetadata", () => {
@@ -89,7 +89,7 @@ export async function loadApodData() {
 
         circle.appendChild(video);
 
-        enableFullscreenOnDoubleClick(video);
+        enableFullscreenOnClick(video);
       });
     }
 
@@ -105,7 +105,7 @@ export async function loadApodData() {
 
       circle.appendChild(img);
 
-      enableFullscreenOnDoubleClick(img);
+      enableFullscreenOnClick(img);
     }
 
     addDescriptionToggleFunction();
@@ -114,8 +114,8 @@ export async function loadApodData() {
   }
 }
 
-function enableFullscreenOnDoubleClick(element) {
-  element.addEventListener("dblclick", async () => {
+function enableFullscreenOnClick(element) {
+  element.addEventListener("click", async () => {
     try {
       // ENTER FULLSCREEN
       if (!document.fullscreenElement) {
