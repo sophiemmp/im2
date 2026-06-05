@@ -170,9 +170,9 @@ header{
 .moon-card{
   position:absolute;
   top:50%;
-  left:75%;
+  right: 0;
   z-index:3;
-  transform:translate(-50%,-50%);
+  transform: translateY(-50%);
   width:1000px;
   max-width:90vw;
   height:580px;
@@ -538,7 +538,7 @@ body {
   header {
     top: auto;
     left: 50%;
-    bottom: 210px;
+    bottom: 25%;
     transform: translateX(-50%);
     width: 100%;
     text-align: center;
@@ -648,38 +648,7 @@ header.corner-placement h2{
 }
 
 /* Moophase */
-.moon-card {
-top: 25%;
-left: 52%;
-width: calc(100% - 28px);
-padding: 20px 14px;
-}
-.phase-label {
-margin-right: 12px;
-gap: 10px;
-}
-.divider {
-height: 190px;
-}
-.title {
-margin-bottom: 16px;
-}
-.stats-grid {
-gap: 16px 14px;
-}
-.value {
-gap: 6px;
-}
-.event-row {
-gap: 10px;
-}
-.moon-icon {
-width: 44px;
-height: 44px;
-}
-.date {
-margin-top: 6px;
-}
+
 
 /* Apod */
 .apod-container {
@@ -743,8 +712,8 @@ padding: 0 8px 20px;
 }
 
 .circle {
-    width: min(88vw, 520px);
-    height: min(88vw, 520px);
+    width: min(520px, 80vw);
+    height: min(520px, 80vw);
     margin: -20px auto 10px;
     transform: translateY(-40px);
 }
@@ -755,4 +724,73 @@ padding: 0 8px 20px;
   color: #fff;
 }
 
+}
+
+@media (max-width: 900px) {
+  
+  .moon-card {
+    top: 30%;
+    width: calc(100% - 28px);
+    padding: 20px 14px;
+    }
+
+    .phase-label {
+      margin-right: 12px;
+      gap: 10px;
+      }
+      .divider {
+      height: 190px;
+      }
+      .title {
+      margin-bottom: 16px;
+      }
+      .stats-grid {
+      gap: 16px 14px;
+      }
+      .value {
+      gap: 6px;
+      }
+      .event-row {
+      gap: 10px;
+      }
+      .moon-icon {
+      width: 44px;
+      height: 44px;
+      }
+      .date {
+      margin-top: 6px;
+      }
+}
+
+@media (max-width: 1400px) and (min-height: 906px) {
+  .moon-card {
+    top: 30%;
+    width: calc(100% - 28px);
+    padding: 20px 14px;
+    }
+}
+
+@media (max-width: 600px) and (max-height: 800px) {
+  .apod-right {
+    align-items: start;
+  }
+  .circle {
+    width: min(350px, 60vw);
+    height: min(350px, 60vw);
+  }
+  .desc-wrapper {
+    max-height: 160px;
+  }
+  .arrow {
+    margin: 0 0 38px;
+  }
+}
+
+@media (min-width: 600px) and (max-height: 800px) { 
+  :root {
+    --fs-title: 24px;
+    --fs-label: 14px;
+    --fs-number: 24px;
+    --fs-unit: 18px;
+    }
 }
