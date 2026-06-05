@@ -84,6 +84,44 @@ header{
   cursor: pointer;
 }
 
+/* Loading screen */
+
+#loading-screen {
+  width:100vw;
+  height:100vh;
+  position:absolute;
+  top:0;
+  left:0;	
+  z-index: 300;
+  background: #000;
+  padding-top: 25vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  font-size: 30px;
+  text-transform: capitalize;
+}
+
+#loading-animation {
+  height: 50px;
+}
+
+#loading-screen .logo {
+  margin-top: 10vh;
+}
+
+#loading-screen .logo h1 {
+  font-size: 154px;
+}
+
+#loading-screen .logo h2 {
+  font-size: 64px;
+}
+
 /* Time / Date / Timezone */
 .time-box{
   position:absolute;
