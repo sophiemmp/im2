@@ -55,7 +55,7 @@ function minDelay(ms) {
 }  
 
 const manager = new THREE.LoadingManager();
-const minLoadTime = 1;
+const minLoadTime = 2000;
 manager.onLoad = async () => {
   // wait for at least MIN_LOAD_MS since page start or since loading began
   await Promise.all([
