@@ -45,6 +45,14 @@ document.addEventListener('widget:navigate', (e) => {
 	loadWidget(key);
 });  
 
+export function returnToHome(element) {
+	element.addEventListener("click", function() {
+		urlParams.set('w', "clock");
+		history.pushState(null, null, "?"+urlParams.toString())
+		loadWidget("clock");
+	});
+}
+
 // footer
 const footer = document.querySelector("footer");
 

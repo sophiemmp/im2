@@ -493,6 +493,13 @@ transform: translateY(-2px);
 outline: none;
 }
 
+/* 404 */
+
+#go-back {
+  font-weight: 700;
+  cursor: pointer;
+}
+
 /* Footer */
 footer {
   position: fixed;
@@ -507,7 +514,7 @@ footer {
   backdrop-filter: blur(10px);
   z-index: 9999;
   transition: bottom 0.35s ease;
-  border-radius: 25px;
+  border-radius: 25px 25px 0 0;
 }
 
 footer.show {

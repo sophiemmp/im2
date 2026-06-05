@@ -2,6 +2,7 @@ import { handleVisibilityForClock, stopClockInterval } from "./clock.js";
 import { loadApodData } from "./apod.js";
 import { insertMoonData } from "./moonphase.js";
 import { clockScene, moonPhaseScene, apodScene } from "./3d-scene.js";
+import { returnToHome } from "./main.js";
 
 export function loadWidget(widget) {
 	document.removeEventListener("visibilitychange", handleVisibilityForClock);
@@ -36,14 +37,20 @@ export function loadWidget(widget) {
 			break;
 			
 		case "impressum":
-			moveHeaderToCorner(false)
-			loadWidgetContent(widget);
+			moveHeaderToCorner(true)
+			loadWidgetContent(widget).then(function() {
+				clockScene();
+			});
 			break;
 			
 		default:
 			widget = "404";
-			moveHeaderToCorner(false)
-			loadWidgetContent(widget);
+			moveHeaderToCorner(true)
+			loadWidgetContent(widget).then(function() {
+				clockScene();
+				const goBack = document.getElementById("go-back");
+				returnToHome(goBack);
+			});
 			break;
 	}
 }
