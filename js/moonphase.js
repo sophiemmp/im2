@@ -1,5 +1,8 @@
-export async function loadMoonData() {
-	const API_KEY = 'ef56bfc2ceceb995bd46a30d86de0b56f2e324b65ead87090f82acb3d2e8c509';
+const moonStorage = "moon_data";
+const moonApiKey = 'ef56bfc2ceceb995bd46a30d86de0b56f2e324b65ead87090f82acb3d2e8c509';
+
+
+async function loadMoonData() {
 	const BASE_URL = 'https://api.freeastroapi.com/api/v1/moon/phase';
 
 	const params = new URLSearchParams({
@@ -19,7 +22,7 @@ export async function loadMoonData() {
 		const res = await fetch(url, {
 			method: 'GET',
 			headers: {
-				'x-api-key': API_KEY,
+				'x-api-key': moonApiKey,
 				'Accept': 'application/json'
 			}
 		});
@@ -35,63 +38,37 @@ export async function loadMoonData() {
 
 	} catch (err) {
 		console.error('Moon API error:', err);
+		throw err;
 	}
 }
 
 
-async function loadMoonDataMock() {
-	const res = {
-		"timestamp": "2026-05-07T15:54:07+00:00",
-		"phase": {
-		  "name": "Waning Gibbous",
-		  "phase_angle_deg": 245.11,
-		  "illumination": 0.7112,
-		  "age_days": 20.1,
-		  "distance_km": 402144,
-		  "is_waxing": false
-		},
-		"moon_visual": {
-		  "type": "svg",
-		  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"100\" height=\"100\">\n<circle cx=\"50.0\" cy=\"50.0\" r=\"45.0\" fill=\"#1A1A1A\" />\n<path d=\"M 50.0,95.0 A 45.0 45.0 0 0 1 50.0,5.0 A 18.939487405970407 45.0 0 0 1 50.0,95.0 Z\" fill=\"#E0E0E0\" />\n</svg>",
-		  "shadow_ratio": 0.2888,
-		  "waxing": false
-		},
-		"eclipse": {
-		  "is_eclipse": false,
-		  "is_blood_moon": false
-		},
-		"forecast": {
-		  "days_until_full_moon": 25.3,
-		  "days_until_new_moon": 10.3,
-		  "next_special_moon": {
-			"type": "Supermoon",
-			"subtype": "new",
-			"days_until": 10.5,
-			"distance_km": 357269
-		  },
-		  "next_eclipse": {
-			"type": "partial",
-			"is_blood_moon": false,
-			"date": "2026-08-28T04:12:00Z",
-			"days_until": 84.4
-		  }
-		},
-		"traditional_moon": {
-		  "name": "Flower Moon",
-		  "naming_system": "north_american_traditional",
-		  "month": "May",
-		  "applies_to_full_moon_at": "2026-05-31T09:58:01Z",
-		  "is_current_full_moon": false
-		},
-		"next_phases": {
-		  "new_moon": "2026-05-16T18:59:08Z",
-		  "first_quarter": "2026-05-23T11:17:28Z",
-		  "full_moon": "2026-05-31T09:58:01Z",
-		  "last_quarter": "2026-05-09T20:55:10Z"
-		}
-	  };
+export async function preloadMoonData() {
+	const cached = sessionStorage.getItem(moonStorage);
+	if (cached) {
+		console.log("Moon data already preloaded");
+		return JSON.parse(cached);
+	}
 
-	  return transformMoonData(res);
+	const data = await loadMoonData();
+	sessionStorage.setItem(moonStorage, JSON.stringify(data));
+	console.log("Moon data preloaded and cached");
+	return data;
+}
+
+
+export async function getMoonData() {
+	const cached = sessionStorage.getItem(moonStorage);
+	if (cached) {
+		
+		return JSON.parse(cached);
+	}
+
+	const data = await loadMoonData();
+	sessionStorage.setItem(moonStorage, JSON.stringify(data));
+	console.log("moon not preloaded");
+	
+	return data;
 }
 
 function transformMoonData(res) {
@@ -140,7 +117,7 @@ function formatIsoAsUtc(iso) {
 }
   
 
-export async function insertMoonData() {
+export function renderMoonData(data) {
 	const phaseEl = document.querySelector('.phase-label h1');
 	const statEls = Array.from(document.querySelectorAll('.stats-grid .stat'));
 	const ageNumber = statEls[0]?.querySelector('.value .number') ?? null;
@@ -152,8 +129,6 @@ export async function insertMoonData() {
 	const nextEclipseNumber = statEls[3]?.querySelector('.value .number') ?? null;
 	const nextEclipseDate = statEls[3]?.querySelector('.date') ?? null;
 
-	const data = await loadMoonDataMock();
-
 	if (phaseEl) phaseEl.textContent = data.phaseName ?? '—';
 
 	if (ageNumber) ageNumber.textContent = data.ageDays != null ? String(data.ageDays) : '—';
@@ -161,7 +136,7 @@ export async function insertMoonData() {
 
 	if (distanceNumber) {
 		distanceNumber.textContent = data.distanceKm != null
-			? String(data.distanceKm).replace(/\B(?=(\d{3})+(?!\d))/g, "’")
+			? String(data.distanceKm).replace(/\B(?=(\d{3})+(?!\d))/g, "'")
 			: '—';
 	}
 	if (distanceUnit) distanceUnit.textContent = 'km';
@@ -180,6 +155,15 @@ export async function insertMoonData() {
 	if (nextEclipseDate) nextEclipseDate.textContent = formatIsoAsUtc(eclipseDateVal ?? '—');
 }
 
+
+export async function displayMoonPhase() {
+	try {
+		const data = await getMoonData();
+		renderMoonData(data);
+	} catch (err) {
+		console.error("Failed to display moon data:", err);
+	}
+}
 
 
 export function getAgeDays() {

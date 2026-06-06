@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { finishedLoading } from './main.js';
+import { setupLoading, clickable } from './loader.js';
 import { calcResponsiveBreakpoints, currentScene, applyResponsiveLayout, moonPhase, tweenGroup, transitionToMoonPhaseScene, transitionToClockScene, transitionToApodScene, scaleModels } from './animate-3d.js';
 import { getAgeDays } from './moonphase.js';
 
@@ -48,60 +48,8 @@ export const ambientMoonLight = new THREE.AmbientLight(0xffffff, 5);
 scene.add(ambientMoonLight);
 
 // ===== GLTF loading =====
-const clickable = [];
 
-function minDelay(ms) {
-	return new Promise(res => setTimeout(res, ms));
-}  
-
-const manager = new THREE.LoadingManager();
-const minLoadTime = 2000;
-manager.onLoad = async () => {
-	await Promise.all([
-		new Promise(r => requestAnimationFrame(r)),
-		minDelay(minLoadTime)
-	]);
-	finishedLoading();
-};
-manager.onError = (url) => {
-	console.error('Error loading', url);
-	requestAnimationFrame(() => finishedLoading());
-};
-
-const loader = new GLTFLoader(manager);
-
-// helper to load and add model
-async function loadModel(url, parent, name, setupCallback) {
-	try {
-		const gltf = await loader.loadAsync(url);
-		const model = gltf.scene;
-		model.name = name;
-		if (setupCallback) setupCallback(model);
-		parent.add(model);
-		clickable.push(model);
-	} catch (err) {
-		console.error(`Failed to load ${url}:`, err);
-		throw err;
-	}
-}
-
-// loading the objects
-Promise.all([
-	loadModel('assets/moon.glb', moon, 'moon', (model) => {
-		model.position.set(0, 0, 0);
-		model.scale.setScalar(1);
-		model.rotation.set(3.090, 0.030, 2.800);
-	}),
-	loadModel('assets/hubble.glb', hubble, 'hubble', (model) => {
-		model.rotation.set(-2, 3.7500, -1);
-		model.scale.setScalar(calcResponsiveBreakpoints()["hubbleScale"][0]);
-		model.position.set(0, 0, 0);
-		hubble.position.set(7, 1.6, -49.06);
-	})
-]).catch((err) => {
-	console.error('One or more models failed to load:', err);
-});
-
+setupLoading(scene, moon, hubble, finishedLoading);
 
 // position hubble relative to moon
 hubble.position.set(7, 1.6, -49.06);

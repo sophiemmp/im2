@@ -158,6 +158,26 @@ footer.show {
 	font-size: 64px;
 }
 
+.loading-description {
+	display: flex;
+	position: absolute;
+	bottom: 10px;
+	gap: 20px;
+}
+
+.loading-description li {
+	list-style: none;
+}
+
+.loading-description li:before {
+	content: '\21C5';
+	padding-right: 10px
+}
+
+.loading-description .loaded:before {
+	content: '\2713';
+}
+
 
 /*	===============================================
 	Widgets

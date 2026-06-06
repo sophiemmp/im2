@@ -1,6 +1,6 @@
 import { handleVisibilityForClock, stopClockInterval } from "./clock.js";
-import { loadApodData } from "./apod.js";
-import { insertMoonData } from "./moonphase.js";
+import { displayApod } from "./apod.js";
+import { displayMoonPhase } from "./moonphase.js";
 import { clockScene, moonPhaseScene, apodScene } from "./3d-scene.js";
 import { returnToHome } from "./main.js";
 
@@ -24,14 +24,14 @@ export function loadWidget(widget) {
 			moonPhaseScene();
 			moveHeaderToCorner(true)
 			loadWidgetContent(widget).then(function() {
-				insertMoonData();
+				displayMoonPhase();
 			});
 			break;
 			
 			case "apod":
 			moveHeaderToCorner(true)
 			loadWidgetContent(widget).then(function() {
-				loadApodData();
+				displayApod();
 				apodScene();
 			});
 			break;
